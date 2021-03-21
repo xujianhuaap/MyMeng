@@ -1,0 +1,11 @@
+ext {
+
+    android_versions = [
+            lifecycle_version: '2.2.0'
+    ]
+    android_module = [
+            livedata: "androidx.lifecycle:lifecycle-livedata-ktx:${android_versions.lifecycle_version}",
+            viewmodel: "androidx.lifecycle:lifecycle-viewmodel-ktx:${android_versions.lifecycle_version}"
+    ]
+
+}
