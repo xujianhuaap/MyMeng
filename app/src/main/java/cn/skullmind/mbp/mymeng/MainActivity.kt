@@ -6,6 +6,9 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import cn.skullmind.mbp.mymeng.pick_picture.startPickPictureActivity
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +20,11 @@ class MainActivity : AppCompatActivity() {
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
+        }
+
+
+        findViewById<View>(R.id.tv_camera).setOnClickListener{
+            startPickPictureActivity(this);
         }
     }
 
