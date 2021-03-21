@@ -46,5 +46,7 @@ dependencies {
 
     implementation "${rootProject.ext.android_module.livedata}"
     implementation "${rootProject.ext.android_module.viewmodel}"
-
+    implementation "${rootProject.ext.android_module.lifecycle_runtie}"
+    implementation "${rootProject.ext.android_module.view_model_save_state}"
+    annotationProcessor "${rootProject.ext.android_module.lifecycle_compiler}"
 }
