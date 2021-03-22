@@ -17,6 +17,7 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import cn.skullmind.mbp.mymeng.R
+import cn.skullmind.mbp.mymeng.utils.getExternalDir
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,7 +39,7 @@ class PickPictureActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pick_picture)
 
-        photoDir  = getInterPhotoDir()
+        photoDir  = getExternalDir(this,"",Environment.DIRECTORY_PICTURES)
         initView()
 
         if (allPermissionsGranted()) {
@@ -48,14 +49,6 @@ class PickPictureActivity : AppCompatActivity() {
         }
     }
 
-    private fun getPhotoDir():File{
-        var  mediaDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)?: File("")
-        return mediaDir
-    }
-
-    private fun getInterPhotoDir():File{
-        return filesDir
-    }
 
     private fun initView() {
         preview = findViewById(R.id.preview)
