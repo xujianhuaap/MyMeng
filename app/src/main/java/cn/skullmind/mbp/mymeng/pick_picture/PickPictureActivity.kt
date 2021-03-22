@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,53 +18,77 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import cn.skullmind.mbp.mymeng.R
 import java.io.File
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.SimpleFormatter
 
-fun startPickPictureActivity(context: AppCompatActivity){
-    val intent = Intent(context,PickPictureActivity::class.java)
+fun startPickPictureActivity(context: AppCompatActivity) {
+    val intent = Intent(context, PickPictureActivity::class.java)
     context.startActivity(intent)
 }
 
 
-class PickPictureActivity:AppCompatActivity() {
-    private lateinit var preview:PreviewView
+class PickPictureActivity : AppCompatActivity() {
+    private lateinit var preview: PreviewView
     private lateinit var btnTakePhoto: View
+
+    private lateinit var photoDir:File
     private var imageCapture: ImageCapture? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pick_picture)
-        preview = findViewById(R.id.preview)
-        btnTakePhoto = findViewById(R.id.camera_capture_button)
 
-        btnTakePhoto.setOnClickListener{
-            takePhoto()
-        }
+        photoDir  = getInterPhotoDir()
+        initView()
 
-        if(allPermissionsGranted()){
+        if (allPermissionsGranted()) {
             openCamera()
-        }else {
+        } else {
             ActivityCompat.requestPermissions(this, REQUEST_PERMISSIONS, REQUEST_CODE_CAMERA)
         }
     }
 
+    private fun getPhotoDir():File{
+        var  mediaDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)?: File("")
+        return mediaDir
+    }
 
-    private fun takePhoto(){
+    private fun getInterPhotoDir():File{
+        return filesDir
+    }
+
+    private fun initView() {
+        preview = findViewById(R.id.preview)
+        btnTakePhoto = findViewById(R.id.camera_capture_button)
+
+        btnTakePhoto.setOnClickListener {
+            takePhoto()
+        }
+    }
+
+
+    private fun takePhoto() {
         val imageCapture = this.imageCapture ?: return
-        val fileName = String.format("%d.jpg",System.currentTimeMillis())
-        val photoFile = File(PHOTO_DIR,SimpleDateFormat("yyyyMMddHHmmss").format(Date())+".jpg")
+        val photoFile = File(photoDir, SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINESE).format(Date()) + ".jpg")
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
         imageCapture.takePicture(
-            outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
+            outputOptions,
+            ContextCompat.getMainExecutor(this),
+            object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exception: ImageCaptureException) {
-                    Toast.makeText(this@PickPictureActivity,"save photo failure",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@PickPictureActivity,
+                        "save photo failure",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    Toast.makeText(this@PickPictureActivity,"save photo success",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@PickPictureActivity,
+                        "save photo success",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                 }
             }
@@ -71,7 +96,8 @@ class PickPictureActivity:AppCompatActivity() {
 
 
     }
-    private fun openCamera(){
+
+    private fun openCamera() {
 
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener(Runnable {
@@ -82,17 +108,15 @@ class PickPictureActivity:AppCompatActivity() {
 
             val cameraIndex = CameraSelector.DEFAULT_BACK_CAMERA
 
-            if(this.imageCapture == null){
-                this.imageCapture = ImageCapture.Builder().build()
-            }
+            this.imageCapture = this.imageCapture ?: ImageCapture.Builder().build()
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this,cameraIndex,previewFace,imageCapture)
-            }catch (e: Exception){
+                cameraProvider.bindToLifecycle(this, cameraIndex, previewFace, imageCapture)
+            } catch (e: Exception) {
                 e.printStackTrace();
             }
 
-        },ContextCompat.getMainExecutor(this))
+        }, ContextCompat.getMainExecutor(this))
     }
 
     override fun onRequestPermissionsResult(
@@ -102,22 +126,22 @@ class PickPictureActivity:AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if(REQUEST_CODE_CAMERA == requestCode){
-            if(allPermissionsGranted()){
+        if (REQUEST_CODE_CAMERA == requestCode) {
+            if (allPermissionsGranted()) {
                 openCamera()
-            }else{
-                Toast.makeText(this, "please allow camera permission",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "please allow camera permission", Toast.LENGTH_SHORT).show();
             }
         }
     }
-    private fun allPermissionsGranted() = REQUEST_PERMISSIONS.all{
-        ContextCompat.checkSelfPermission(this,it) == PackageManager.PERMISSION_GRANTED;
+
+    private fun allPermissionsGranted() = REQUEST_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED;
     }
 
-    companion object{
-        private  val REQUEST_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-        private const val REQUEST_CODE_CAMERA = 0x1;
-        private const val PHOTO_DIR = "";
+    companion object {
+        private val REQUEST_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private const val REQUEST_CODE_CAMERA = 0x1
 
     }
 }
