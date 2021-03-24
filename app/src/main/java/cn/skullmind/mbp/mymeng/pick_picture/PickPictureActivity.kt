@@ -31,15 +31,16 @@ fun startPickPictureActivity(context: AppCompatActivity) {
 class PickPictureActivity : AppCompatActivity() {
     private lateinit var preview: PreviewView
     private lateinit var btnTakePhoto: View
+    private lateinit var btnIso:View
 
-    private lateinit var photoDir:File
+    private lateinit var photoDir: File
     private var imageCapture: ImageCapture? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pick_picture)
 
-        photoDir  = getExternalDir(this,"",Environment.DIRECTORY_PICTURES)
+        initData()
         initView()
 
         if (allPermissionsGranted()) {
@@ -49,20 +50,35 @@ class PickPictureActivity : AppCompatActivity() {
         }
     }
 
+    private fun initData() {
+        photoDir = getExternalDir(this, "", Environment.DIRECTORY_PICTURES)
+    }
+
 
     private fun initView() {
         preview = findViewById(R.id.preview)
-        btnTakePhoto = findViewById(R.id.camera_capture_button)
-
+        btnTakePhoto = findViewById(R.id.btn_take_photo)
         btnTakePhoto.setOnClickListener {
             takePhoto()
         }
+
+        btnIso = findViewById(R.id.btn_config_iso)
+        btnIso.setOnClickListener {
+            showISODialog()
+        }
+    }
+
+    private fun showISODialog() {
+        TODO("Not yet implemented")
     }
 
 
     private fun takePhoto() {
         val imageCapture = this.imageCapture ?: return
-        val photoFile = File(photoDir, SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINESE).format(Date()) + ".jpg")
+        val photoFile = File(
+            photoDir,
+            SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINESE).format(Date()) + ".jpg"
+        )
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
         imageCapture.takePicture(
             outputOptions,
@@ -106,7 +122,7 @@ class PickPictureActivity : AppCompatActivity() {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(this, cameraIndex, previewFace, imageCapture)
             } catch (e: Exception) {
-                e.printStackTrace();
+                e.printStackTrace()
             }
 
         }, ContextCompat.getMainExecutor(this))
@@ -123,13 +139,13 @@ class PickPictureActivity : AppCompatActivity() {
             if (allPermissionsGranted()) {
                 openCamera()
             } else {
-                Toast.makeText(this, "please allow camera permission", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "please allow camera permission", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun allPermissionsGranted() = REQUEST_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED;
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
     }
 
     companion object {
