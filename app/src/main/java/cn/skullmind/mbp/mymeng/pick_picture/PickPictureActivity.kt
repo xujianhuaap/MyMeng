@@ -35,6 +35,11 @@ class PickPictureActivity : AppCompatActivity() {
 
     private lateinit var photoDir: File
     private var imageCapture: ImageCapture? = null
+    private val listener:CameraConfigChangeListener = object :CameraConfigChangeListener{
+        override fun onChange(value: Int) {
+            Toast.makeText(this@PickPictureActivity,"${value}",Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,9 +74,14 @@ class PickPictureActivity : AppCompatActivity() {
     }
 
     private fun showISODialog() {
-        TODO("Not yet implemented")
-    }
+        supportFragmentManager.findFragmentById(R.id.fragment_config)?.also {
+            val cameraConfigFragment = it as CameraConfigFragment
+            cameraConfigFragment.changeListener = cameraConfigFragment.changeListener?:listener
 
+            if(!it.isResumed) supportFragmentManager.beginTransaction().show(it).commit()
+        }
+
+    }
 
     private fun takePhoto() {
         val imageCapture = this.imageCapture ?: return

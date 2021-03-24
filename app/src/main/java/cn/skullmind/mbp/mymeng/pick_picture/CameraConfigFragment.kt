@@ -9,11 +9,10 @@ import androidx.fragment.app.Fragment
 import cn.skullmind.mbp.mymeng.R
 
 class CameraConfigFragment : Fragment() {
-    lateinit var changeListener: CameraConfigChangeListener
+     var changeListener: CameraConfigChangeListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        changeListener = arguments?.getSerializable(ARGUMENTS_KEY_CHANGE_LISTENER) as CameraConfigChangeListener
     }
 
     override fun onCreateView(

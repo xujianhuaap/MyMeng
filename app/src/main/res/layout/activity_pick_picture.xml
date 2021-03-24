@@ -38,6 +38,7 @@
             android:layout_height="match_parent" />
         <fragment
             android:id="@+id/fragment_config"
+            android:name="cn.skullmind.mbp.mymeng.pick_picture.CameraConfigFragment"
             android:layout_width="@dimen/dimen_50"
             android:layout_height="match_parent"/>
     </FrameLayout>
