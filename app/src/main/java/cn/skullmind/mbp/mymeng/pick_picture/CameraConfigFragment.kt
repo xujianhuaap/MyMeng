@@ -36,7 +36,9 @@ class CameraConfigFragment : Fragment() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
+                this@CameraConfigFragment.fragmentManager?.also {
+                    it.beginTransaction().hide(this@CameraConfigFragment).commit()
+                }
             }
         })
     }

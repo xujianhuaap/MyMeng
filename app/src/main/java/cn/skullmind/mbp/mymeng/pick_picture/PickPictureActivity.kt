@@ -47,6 +47,7 @@ class PickPictureActivity : AppCompatActivity() {
 
         initData()
         initView()
+        initFragment()
 
         if (allPermissionsGranted()) {
             openCamera()
@@ -73,12 +74,22 @@ class PickPictureActivity : AppCompatActivity() {
         }
     }
 
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        initFragment()
+    }
     private fun showISODialog() {
+        supportFragmentManager.findFragmentById(R.id.fragment_config)?.also {
+            if(!it.isResumed || it.isHidden) supportFragmentManager.beginTransaction().show(it).commit()
+        }
+
+    }
+
+    private fun initFragment(){
         supportFragmentManager.findFragmentById(R.id.fragment_config)?.also {
             val cameraConfigFragment = it as CameraConfigFragment
             cameraConfigFragment.changeListener = cameraConfigFragment.changeListener?:listener
-
-            if(!it.isResumed) supportFragmentManager.beginTransaction().show(it).commit()
         }
 
     }
