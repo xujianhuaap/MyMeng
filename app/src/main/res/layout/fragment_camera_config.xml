@@ -6,7 +6,7 @@
 
     <cn.skullmind.mbp.mymeng.widget.VerticalSeekBar
         android:id="@+id/seek_bar"
-        android:layout_width="@dimen/dimen_20"
+        android:layout_width="@dimen/dimen_40"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/dimen_40"
         android:layout_marginBottom="@dimen/dimen_10"
