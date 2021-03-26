@@ -3,23 +3,23 @@
     <item android:id="@android:id/background" >
         <shape android:shape="rectangle">
             <solid android:color="@android:color/darker_gray"/>
-            <size android:width="@dimen/dimen_400" android:height="@dimen/dimen_10"/>
+            <size android:width="@dimen/dimen_10" android:height="@dimen/dimen_400"/>
             <corners android:radius="@dimen/dimen_10"></corners>
         </shape>
     </item>
 
     <item android:id="@android:id/secondaryProgress">
-        <clip>
+        <clip android:clipOrientation="vertical" android:gravity="bottom">
             <shape>
                 <solid android:color="@android:color/darker_gray"/>
             </shape>
         </clip>
     </item>
     <item android:id="@android:id/progress">
-        <clip>
+        <clip android:clipOrientation="vertical" android:gravity="bottom">
             <shape android:shape="rectangle">
                 <solid android:color="@color/color_green_0ADA03"/>
-                <size android:width="@dimen/dimen_400" android:height="@dimen/dimen_10"/>
+                <size android:width="@dimen/dimen_10" android:height="@dimen/dimen_400"/>
                 <corners android:radius="@dimen/dimen_10"></corners>
             </shape>
         </clip>

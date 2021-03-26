@@ -39,9 +39,9 @@
         <fragment
             android:id="@+id/fragment_config"
             android:name="cn.skullmind.mbp.mymeng.pick_picture.CameraConfigFragment"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dimen_50"
-            android:layout_gravity="bottom"/>
+            android:layout_width="@dimen/dimen_100"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

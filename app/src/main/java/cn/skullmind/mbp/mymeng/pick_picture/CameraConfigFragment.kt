@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import cn.skullmind.mbp.mymeng.R
+import cn.skullmind.mbp.mymeng.widget.OnSeekBarChangeListener
+import cn.skullmind.mbp.mymeng.widget.VerticalSeekBar
 
 class CameraConfigFragment : Fragment() {
      var changeListener: CameraConfigChangeListener? = null
@@ -25,19 +27,19 @@ class CameraConfigFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val seekBar = view.findViewById<SeekBar>(R.id.seek_bar)
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        val seekBar = view.findViewById<VerticalSeekBar>(R.id.seek_bar)
+        seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: VerticalSeekBar?, progress: Int, fromUser: Boolean) {
                 changeListener?.onChange(progress)
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            override fun onStartTrackingTouch(seekBar: VerticalSeekBar?) {
                 //
             }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            override fun onStopTrackingTouch(seekBar: VerticalSeekBar?) {
                 this@CameraConfigFragment.fragmentManager?.also {
-                    it.beginTransaction().hide(this@CameraConfigFragment).commit()
+//                    it.beginTransaction().hide(this@CameraConfigFragment).commit()
                 }
             }
         })

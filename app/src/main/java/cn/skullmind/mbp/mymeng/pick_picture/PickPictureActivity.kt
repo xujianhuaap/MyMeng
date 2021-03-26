@@ -17,6 +17,7 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import cn.skullmind.mbp.mymeng.R
+import cn.skullmind.mbp.mymeng.utils.LogUtil
 import cn.skullmind.mbp.mymeng.utils.getExternalDir
 import java.io.File
 import java.text.SimpleDateFormat
@@ -29,15 +30,16 @@ fun startPickPictureActivity(context: AppCompatActivity) {
 
 
 class PickPictureActivity : AppCompatActivity() {
+    val tag: String = PickPictureActivity::class.java.simpleName
     private lateinit var preview: PreviewView
     private lateinit var btnTakePhoto: View
-    private lateinit var btnIso:View
+    private lateinit var btnIso: View
 
     private lateinit var photoDir: File
     private var imageCapture: ImageCapture? = null
-    private val listener:CameraConfigChangeListener = object :CameraConfigChangeListener{
+    private val listener: CameraConfigChangeListener = object : CameraConfigChangeListener {
         override fun onChange(value: Int) {
-            Toast.makeText(this@PickPictureActivity,"${value}",Toast.LENGTH_SHORT).show()
+            LogUtil.v(tag, "config $value")
         }
     }
 
@@ -79,17 +81,19 @@ class PickPictureActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         initFragment()
     }
+
     private fun showISODialog() {
         supportFragmentManager.findFragmentById(R.id.fragment_config)?.also {
-            if(!it.isResumed || it.isHidden) supportFragmentManager.beginTransaction().show(it).commit()
+            if (!it.isResumed || it.isHidden) supportFragmentManager.beginTransaction().show(it)
+                .commit()
         }
 
     }
 
-    private fun initFragment(){
+    private fun initFragment() {
         supportFragmentManager.findFragmentById(R.id.fragment_config)?.also {
             val cameraConfigFragment = it as CameraConfigFragment
-            cameraConfigFragment.changeListener = cameraConfigFragment.changeListener?:listener
+            cameraConfigFragment.changeListener = cameraConfigFragment.changeListener ?: listener
         }
 
     }
@@ -172,7 +176,6 @@ class PickPictureActivity : AppCompatActivity() {
     companion object {
         private val REQUEST_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_CAMERA = 0x1
-
     }
 }
 
