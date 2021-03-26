@@ -28,7 +28,7 @@ class CameraConfigFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val seekBar = view.findViewById<VerticalSeekBar>(R.id.seek_bar)
-        seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+        seekBar.seekBarChangeListener = (object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: VerticalSeekBar?, progress: Int, fromUser: Boolean) {
                 changeListener?.onChange(progress)
             }

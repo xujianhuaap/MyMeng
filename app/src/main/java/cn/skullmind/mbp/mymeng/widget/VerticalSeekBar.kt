@@ -1,41 +1,59 @@
 package cn.skullmind.mbp.mymeng.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.graphics.Region
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.ProgressBar
 import cn.skullmind.mbp.mymeng.R
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 class VerticalSeekBar : ProgressBar {
-    private var thumbRect = Rect()
-    private var mOnSeekBarChangeListener: OnSeekBarChangeListener? = null
-    private var thumb: Drawable = context.resources.getDrawable(R.drawable.ic_thumb)
-    private var scaledTouchSlop = 0
+    private val scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+
+    private val thumb: Drawable? = context.getDrawable(R.drawable.ic_thumb)
+    private val thumbRect = Rect()
+    private val thumbOffset = (thumb?.intrinsicWidth ?: 0) / 2
     private var touchThumbOffset = 0.0f
-    private var thumbOffset = 0
+        set(value) {
+            if (value > 0) field = value
+        }
+
+    private val attributeValues:VerticalSeekBarAttrs
+
+    var seekBarChangeListener: OnSeekBarChangeListener? = null
     private var isDragging = false
     private var touchDownY = 0f
-    private var fakeMin = 0;
 
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleL: Int) : super(
-        context, attrs, defStyleL
-    ) {
-        scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
-        thumbOffset = thumb.intrinsicWidth / 2
-    }
+    constructor(context: Context) : this(context, null)
 
     constructor(context: Context, attrs: AttributeSet?) : this(
         context, attrs,
         R.style.Widget_AppCompat_SeekBar
     )
 
-    constructor(context: Context) : this(context, null)
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
+        context, attrs, defStyle) {
+        attributeValues = initAttr(context, attrs)
+    }
+
+    private fun initAttr(context: Context, attrs: AttributeSet?): VerticalSeekBarAttrs {
+        val attrsArray = context.obtainStyledAttributes(attrs, R.styleable.VerticalSeekBar)
+        val drawablePadding = attrsArray.getDimensionPixelSize(
+            R.styleable.VerticalSeekBar_progressBarPadding,
+            resources.getDimensionPixelSize(R.dimen.dimen_5))
+
+        val min = attrsArray.getInteger(R.styleable.VerticalSeekBar_min,0)
+
+        attrsArray.recycle()
+        return VerticalSeekBarAttrs(drawablePadding, min)
+    }
 
 
     override fun onDraw(canvas: Canvas?) {
@@ -45,31 +63,29 @@ class VerticalSeekBar : ProgressBar {
         }
     }
 
-    fun drawSuperTrack(canvas: Canvas) {
-        val d: Drawable = progressDrawable
-        if (d != null) {
-            // Translate canvas so a indeterminate circular progress bar with padding
-            // rotates properly in its animation
+    private fun drawSuperTrack(canvas: Canvas) {
+        progressDrawable?.also {
             val saveCount = canvas.save()
             canvas.translate(paddingLeft.toFloat(), paddingTop.toFloat())
-            d.setBounds(20,0,width-20,height)
-            d.draw(canvas)
+            val progressBarPadding = attributeValues.progressBarPadding
+            progressDrawable.setBounds(progressBarPadding, 0, width - progressBarPadding, height)
+            progressDrawable.draw(canvas)
             canvas.restoreToCount(saveCount)
-
         }
     }
 
-    fun drawTrack(canvas: Canvas) {
-        val offSet = (width - thumb.intrinsicWidth)/2
-        thumbRect.left = offSet
-        thumbRect.top  = height - thumb.intrinsicHeight-touchThumbOffset.toInt()+thumbOffset
-        thumbRect.right = thumb.intrinsicWidth + offSet
-        thumbRect.bottom = height-touchThumbOffset.toInt()+thumbOffset
-
+    private fun drawTrack(canvas: Canvas) {
+        thumb?.also {
+            val offSet = (width - thumb.intrinsicWidth) / 2
+            thumbRect.left = offSet
+            thumbRect.top = height - thumb.intrinsicHeight - touchThumbOffset.toInt() + thumbOffset
+            thumbRect.right = thumb.intrinsicWidth + offSet
+            thumbRect.bottom = height - touchThumbOffset.toInt() + thumbOffset
+        }
         drawSuperTrack(canvas)
     }
 
-    fun drawThumb(canvas: Canvas) {
+    private fun drawThumb(canvas: Canvas) {
         if (thumb != null) {
             val saveCount = canvas.save()
             // Translate the padding. For the x, we need to allow the thumb to
@@ -82,6 +98,7 @@ class VerticalSeekBar : ProgressBar {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!isEnabled) {
             return false
@@ -98,7 +115,7 @@ class VerticalSeekBar : ProgressBar {
                 trackTouchEvent(event)
             } else {
                 val y = event.y
-                if (Math.abs(y - touchDownY) > scaledTouchSlop) {
+                if (abs(y - touchDownY) > scaledTouchSlop) {
                     startDrag(event)
                 }
             }
@@ -131,44 +148,46 @@ class VerticalSeekBar : ProgressBar {
     }
 
     private fun trackTouchEvent(event: MotionEvent) {
-        val x = Math.round(event.x)
-        val y = Math.round(event.y)
+        val x = event.x.roundToInt()
+        val y = event.y.roundToInt()
+        if(!thumbRect.contains(x,y) ) return
         val height = height
         val availableHeight: Int = height - paddingBottom - paddingTop
-        val scale: Float
-        var progress = 0.0f
 
-        if (y > height - paddingBottom) {
-            scale = 0.0f
-        } else if (y < paddingTop) {
-            scale = 1.0f
-        } else {
-            scale = ((availableHeight - y + paddingTop) / availableHeight.toFloat())
+        val scale = when {
+            y > height - paddingBottom -> {
+                0.0f
+            }
+            y < paddingTop -> {
+                1.0f
+            }
+            else -> {
+                ((availableHeight - y + paddingTop) / availableHeight.toFloat())
+            }
         }
-
-        val range = max - fakeMin
-
+        val minValue = attributeValues.min
+        val range = max - minValue
         touchThumbOffset = scale * height
-        progress = scale * range + fakeMin
+        val progress = scale * range + minValue
         setHotspot(x.toFloat(), y.toFloat())
-        setProgress(Math.round(progress))
+        setProgress(progress.roundToInt())
     }
 
     /**
      * This is called when the user has started touching this widget.
      */
-    fun onStartTrackingTouch() {
+    private fun onStartTrackingTouch() {
         isDragging = true
-        mOnSeekBarChangeListener?.onStartTrackingTouch(this)
+        seekBarChangeListener?.onStartTrackingTouch(this)
     }
 
     /**
      * This is called when the user either releases his touch or the touch is
      * canceled.
      */
-    fun onStopTrackingTouch() {
+    private fun onStopTrackingTouch() {
         isDragging = false
-        mOnSeekBarChangeListener?.onStopTrackingTouch(this)
+        seekBarChangeListener?.onStopTrackingTouch(this)
     }
 
     private fun setHotspot(x: Float, y: Float) {
@@ -179,27 +198,18 @@ class VerticalSeekBar : ProgressBar {
 
     private fun startDrag(event: MotionEvent) {
         isPressed = true
-        if (thumb != null) {
-            // This may be within the padding region.
-            invalidate(thumb.getBounds())
-        }
+        thumb?.also { invalidate() }
         onStartTrackingTouch()
         trackTouchEvent(event)
         attemptClaimDrag()
     }
 
     private fun attemptClaimDrag() {
-        if (parent != null) {
-            parent.requestDisallowInterceptTouchEvent(true)
-        }
+        parent?.also { parent.requestDisallowInterceptTouchEvent(true) }
     }
 
     private fun isInScrollingContainer(): Boolean {
         return false
-    }
-
-    fun setOnSeekBarChangeListener(l: OnSeekBarChangeListener) {
-        mOnSeekBarChangeListener = l
     }
 
 
@@ -233,3 +243,5 @@ interface OnSeekBarChangeListener {
      */
     fun onStopTrackingTouch(seekBar: VerticalSeekBar?)
 }
+
+data class VerticalSeekBarAttrs(val progressBarPadding:Int, val min:Int)
