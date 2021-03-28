@@ -53,4 +53,8 @@ dependencies {
     implementation  "${rootProject.ext.android_module.camerax_view}"
     implementation  "${rootProject.ext.android_module.camerax_lifecycle}"
     implementation  "${rootProject.ext.android_module.camerax_2}"
+
+    implementation "${rootProject.ext.android_module.worker_runtime}"
+    implementation "${rootProject.ext.android_module.worker_runtime_ktx}"
+    implementation "${rootProject.ext.android_module.worker_rxjava2}"
 }

@@ -1,13 +1,14 @@
 package cn.skullmind.mbp.mymeng
 
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import cn.skullmind.mbp.mymeng.pick_picture.startPickPictureActivity
+import cn.skullmind.mbp.mymeng.work_manager.ImageOptions
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,13 +20,19 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+                .setAction("Action", null).show()
         }
 
 
-        findViewById<View>(R.id.tv_camera).setOnClickListener{
-            startPickPictureActivity(this);
+        findViewById<View>(R.id.tv_camera).setOnClickListener {
+            startPickPictureActivity(this)
         }
+
+        findViewById<View>(R.id.tv_image_upload).setOnClickListener {
+
+            ImageOptions().build(this).enqueue()
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
