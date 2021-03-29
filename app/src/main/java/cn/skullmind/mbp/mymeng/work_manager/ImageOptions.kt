@@ -13,8 +13,12 @@ class ImageOptions {
             .setInputData(getFilterImageInputData())
             .build()
 
+        val compressImageWork = OneTimeWorkRequestBuilder<CompressImageWork>()
+            .build()
+
         return WorkManager.getInstance(context)
             .beginUniqueWork(WORKER_UPLOAD_IMAGES,ExistingWorkPolicy.REPLACE,work)
+            .then(compressImageWork)
     }
 
 
