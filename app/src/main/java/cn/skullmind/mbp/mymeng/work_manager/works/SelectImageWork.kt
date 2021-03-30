@@ -1,4 +1,4 @@
-package cn.skullmind.mbp.mymeng.work_manager
+package cn.skullmind.mbp.mymeng.work_manager.works
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -21,17 +21,22 @@ class SelectImageWork(context: Context, workerParameters: WorkerParameters) :
     @SuppressLint("RestrictedApi")
     override suspend fun doWork(): Result {
         val imageId = inputData.getInt(INPUT_DATA_KEY_IMAGE_URLS, 0)
+        writeBitmapToFile(applicationContext, getBitmap(imageId))?.also {
+            val data = Data.Builder().put(OUTPUT_DATA_KEY_IMAGE_URL, it.toString()).build()
+            LogUtil.d(SelectImageWork::class.java.simpleName, "filter image work success upload")
+            return Result.success(data)
+        }
+       return Result.failure()
+    }
+
+    private fun getBitmap(imageId: Int): Bitmap? {
         val options = BitmapFactory.Options().apply {
             this.inJustDecodeBounds = true
-
         }
         BitmapFactory.decodeResource(applicationContext.resources, imageId, options)
         options.inJustDecodeBounds = false
         val bitmap = BitmapFactory.decodeResource(applicationContext.resources, imageId, options)
-        val uri = writeBitmapToFile(applicationContext, bitmap)
-        val data = Data.Builder().put(OUTPUT_DATA_KEY_IMAGE_URL, uri.toString()).build()
-        LogUtil.d(SelectImageWork::class.java.simpleName, "filter image work success upload")
-        return Result.success(data)
+        return bitmap
     }
 
     /**
@@ -42,12 +47,11 @@ class SelectImageWork(context: Context, workerParameters: WorkerParameters) :
      * directory.
      * @return a [Uri] to the output [Bitmap].
      */
-    @Throws(FileNotFoundException::class)
     private fun writeBitmapToFile(
         applicationContext: Context,
-        bitmap: Bitmap
-    ): Uri {
-
+        bitmap: Bitmap?
+    ): Uri? {
+        if(bitmap == null) return null
         // Bitmaps are being written to a temporary directory. This is so they can serve as inputs
         // for workers downstream, via Worker chaining.
         val name = String.format("filter-output-%s.png", UUID.randomUUID().toString())
@@ -55,15 +59,17 @@ class SelectImageWork(context: Context, workerParameters: WorkerParameters) :
         if (!outputDir.exists()) {
             outputDir.mkdirs() // should succeed
         }
-        outputDir.listFiles().forEach {
-            it.delete()
+        outputDir.listFiles()?.forEach {
+            it?.delete()
         }
         val outputFile = File(outputDir, name)
         var out: FileOutputStream? = null
         try {
             out = FileOutputStream(outputFile)
             bitmap.compress(Bitmap.CompressFormat.PNG, 0 /* ignored for PNG */, out)
-        } finally {
+        } catch (e: FileNotFoundException){
+            return null
+        }finally {
             if (out != null) {
                 try {
                     out.close()

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.work.*
 import cn.skullmind.mbp.mymeng.R
+import cn.skullmind.mbp.mymeng.work_manager.works.CompressImageWork
+import cn.skullmind.mbp.mymeng.work_manager.works.SelectImageWork
 
 class ImageOptions {
 
@@ -14,7 +16,12 @@ class ImageOptions {
             .setInputData(getFilterImageInputData())
             .build()
 
+        val compressConstraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(true)
+            .setRequiresStorageNotLow(true).build()
+
         val compressImageWork = OneTimeWorkRequestBuilder<CompressImageWork>()
+            .setConstraints(compressConstraints)
             .build()
 
         return WorkManager.getInstance(context)
@@ -25,7 +32,8 @@ class ImageOptions {
 
     @SuppressLint("RestrictedApi")
     fun getFilterImageInputData(): Data {
-        return Data.Builder().put(SelectImageWork.INPUT_DATA_KEY_IMAGE_URLS,
+        return Data.Builder().put(
+            SelectImageWork.INPUT_DATA_KEY_IMAGE_URLS,
             R.mipmap.ic_test).build()
     }
 
