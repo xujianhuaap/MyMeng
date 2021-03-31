@@ -12,7 +12,7 @@ class ImageOptions {
 
     fun build(context: Context): WorkContinuation {
 
-        val work = OneTimeWorkRequestBuilder<SelectImageWork>()
+        val selectImageWork = OneTimeWorkRequestBuilder<SelectImageWork>()
             .setInputData(getFilterImageInputData())
             .build()
 
@@ -25,7 +25,7 @@ class ImageOptions {
             .build()
 
         return WorkManager.getInstance(context)
-            .beginUniqueWork(WORKER_UPLOAD_IMAGES, ExistingWorkPolicy.REPLACE,work)
+            .beginUniqueWork(WORKER_UPLOAD_IMAGES, ExistingWorkPolicy.REPLACE,selectImageWork)
             .then(compressImageWork)
     }
 

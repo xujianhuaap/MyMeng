@@ -12,4 +12,10 @@
 
     <string name="function_upload_image"> upload_image</string>
     <string name="function_camera"> open camera</string>
+    <string name="function_user"> start user activity</string>
+
+
+
+    <string name="user_delete"> delete all </string>
+    <string name="user_add"> add user </string>
 </resources>

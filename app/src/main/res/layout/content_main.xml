@@ -32,6 +32,16 @@
 
         </TextView>
 
+        <TextView
+            android:id="@+id/tv_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="18sp"
+            android:text="@string/function_user">
+
+        </TextView>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

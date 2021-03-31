@@ -1,36 +1,42 @@
 ext {
 
     android_versions = [
-            camerax_version:"1.0.0-beta07",
+            camerax_version  : "1.0.0-beta07",
             lifecycle_version: '2.2.0',
             arch_core_version: '2.1.0',
-            work_version: '2.5.0'
+            work_version     : '2.5.0',
+            room_version     : "2.2.6"
     ]
 
     android_module = [
             // ============================ life cycle ============================================================================================
-            livedata: "androidx.lifecycle:lifecycle-livedata-ktx:${android_versions.lifecycle_version}",
-            viewmodel: "androidx.lifecycle:lifecycle-viewmodel-ktx:${android_versions.lifecycle_version}",
-            lifecycle_runtie: "androidx.lifecycle:lifecycle-runtime:${android_versions.lifecycle_version}",
+            livedata             : "androidx.lifecycle:lifecycle-livedata-ktx:${android_versions.lifecycle_version}",
+            viewmodel            : "androidx.lifecycle:lifecycle-viewmodel-ktx:${android_versions.lifecycle_version}",
+            lifecycle_runtie     : "androidx.lifecycle:lifecycle-runtime:${android_versions.lifecycle_version}",
             //save state
             view_model_save_state: "androidx.lifecycle:lifecycle-viewmodel-savedstate:${android_versions.lifecycle_version}",
-            lifecycle_compiler: "androidx.lifecycle:lifecycle-compiler:${android_versions.lifecycle_version}",
+            lifecycle_compiler   : "androidx.lifecycle:lifecycle-compiler:${android_versions.lifecycle_version}",
             // ============================= life cycle ===========================================================================
 
             // ============================= camera ========================================================================
-            camerax_2: "androidx.camera:camera-camera2:${android_versions.camerax_version}",
-            camerax_lifecycle: "androidx.camera:camera-lifecycle:${android_versions.camerax_version}",
-            camerax_view: "androidx.camera:camera-view:1.0.0-alpha14",
+            camerax_2            : "androidx.camera:camera-camera2:${android_versions.camerax_version}",
+            camerax_lifecycle    : "androidx.camera:camera-lifecycle:${android_versions.camerax_version}",
+            camerax_view         : "androidx.camera:camera-view:1.0.0-alpha14",
             //============================ camera ================================================================
             //=============================== worker manager ===============================
-            worker_runtime: "androidx.work:work-runtime:${android_versions.work_version}",
-            worker_runtime_ktx: "androidx.work:work-runtime-ktx:${android_versions.work_version}",
-            worker_rxjava2:"androidx.work:work-rxjava2:${android_versions.work_version}",
-            worker_multiprocess: "androidx.work:work-multiprocess:${android_versions.work_version}"
+            worker_runtime       : "androidx.work:work-runtime:${android_versions.work_version}",
+            worker_runtime_ktx   : "androidx.work:work-runtime-ktx:${android_versions.work_version}",
+            worker_rxjava2       : "androidx.work:work-rxjava2:${android_versions.work_version}",
+            worker_multiprocess  : "androidx.work:work-multiprocess:${android_versions.work_version}",
             //=============================== work manager ==============================================
 
+            //=============================== room ======================================================
 
-
+            room_runtime         : "androidx.room:room-runtime:${android_versions.room_version}",
+            room_compiler        : "androidx.room:room-compiler:${android_versions.room_version}",
+            // optional - Kotlin Extensions and Coroutines support for Room
+            room_ktx             : "androidx.room:room-ktx:${android_versions.room_version}",
+            //========================== room =======================================================
     ]
 
     android_test_module = [

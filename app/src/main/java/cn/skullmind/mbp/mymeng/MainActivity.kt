@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import cn.skullmind.mbp.mymeng.pick_picture.startPickPictureActivity
+import cn.skullmind.mbp.mymeng.user.startUserActivity
 import cn.skullmind.mbp.mymeng.work_manager.ImageOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -32,6 +33,13 @@ class MainActivity : AppCompatActivity() {
 
             ImageOptions().build(this).enqueue()
         }
+
+        findViewById<View>(R.id.tv_user).setOnClickListener {
+            startUserActivity(this)
+
+        }
+
+
 
     }
 

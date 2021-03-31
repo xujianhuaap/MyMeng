@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 30
@@ -14,6 +15,16 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
+
     }
 
     buildTypes {
@@ -48,7 +59,7 @@ dependencies {
     implementation "${rootProject.ext.android_module.viewmodel}"
     implementation "${rootProject.ext.android_module.lifecycle_runtie}"
     implementation "${rootProject.ext.android_module.view_model_save_state}"
-    annotationProcessor "${rootProject.ext.android_module.lifecycle_compiler}"
+    kapt "${rootProject.ext.android_module.lifecycle_compiler}"
 
     implementation  "${rootProject.ext.android_module.camerax_view}"
     implementation  "${rootProject.ext.android_module.camerax_lifecycle}"
@@ -57,4 +68,9 @@ dependencies {
     implementation "${rootProject.ext.android_module.worker_runtime}"
     implementation "${rootProject.ext.android_module.worker_runtime_ktx}"
     implementation "${rootProject.ext.android_module.worker_rxjava2}"
+
+    implementation "${rootProject.ext.android_module.room_runtime}"
+    implementation "${rootProject.ext.android_module.room_ktx}"
+    kapt "${rootProject.ext.android_module.room_compiler}"
+
 }

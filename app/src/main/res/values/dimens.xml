@@ -15,5 +15,6 @@
     <dimen name="dimen_100">100dp</dimen>
     <dimen name="dimen_400">400dp</dimen>
 
+    <dimen name="font_17">17sp</dimen>
 
 </resources>
