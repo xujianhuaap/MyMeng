@@ -15,7 +15,7 @@
     <string name="function_user"> start user activity</string>
 
 
-
+    <string name="user_query"> query all </string>
     <string name="user_delete"> delete all </string>
     <string name="user_add"> add user </string>
 </resources>

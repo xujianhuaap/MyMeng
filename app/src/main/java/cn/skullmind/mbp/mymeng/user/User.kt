@@ -23,6 +23,7 @@ data class User(
     ):this(UUID.randomUUID().toString(),name,age,gender,rank)
 }
 
+data class Identify(val id: String)
 
 @Entity
 data class RankInfo(
