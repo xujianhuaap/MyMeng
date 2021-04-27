@@ -41,6 +41,18 @@
             android:text="@string/function_user">
 
         </TextView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5"
+            android:orientation="horizontal"
+            android:background="@color/colorPrimaryDark">
+            <cn.skullmind.mbp.mymeng.Fibonacci.FibonacciView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+
 
     </LinearLayout>
 
