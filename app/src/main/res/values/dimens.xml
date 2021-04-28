@@ -18,5 +18,9 @@
     <dimen name="font_17">17sp</dimen>
     <dimen name="font_20">20sp</dimen>
     <dimen name="dimen_700">700dp</dimen>
+    <dimen name="dimen_500">500dp</dimen>
+    <dimen name="dimen_600">600dp</dimen>
+    <dimen name="dimen_580">580dp</dimen>
+    <dimen name="dimen_4">4dp</dimen>
 
 </resources>

@@ -4,9 +4,9 @@ import android.graphics.Point
 import android.graphics.RectF
 
 object Fibonacci {
-    fun draw(initP1:Int = 0, initP2:Int = 1, initAngle:Int = 0,
+    fun draw(initP1:Int = 0, initP2:Int = 1, initAngle:Float = 0.0f,
              initCenter:Point,
-             drawArc: (angle:Int,rectF:RectF) -> Unit){
+             drawArc: (angle:Float,rectF:RectF) -> Unit){
 
         var center = initCenter
         var a = initP1
@@ -14,7 +14,7 @@ object Fibonacci {
         var angleStart  = initAngle
         var radius = a
 
-        while (a < 1000){
+        while (a < 800){
             if(canDrawArc(radius)){
                 drawArc(angleStart,getArcRectF(radius,center))
             }
@@ -44,12 +44,12 @@ object Fibonacci {
         return RectF(left,top,right,bottom)
     }
 
-    private fun getNextCenter(currentCenter:Point, startAngle:Int, value: Int):Point{
+    private fun getNextCenter(currentCenter:Point, startAngle:Float, value: Int):Point{
         return when(startAngle % 360){
-            0 -> Point(currentCenter.x - value,currentCenter.y)
-            90 -> Point(currentCenter.x,currentCenter.y -value)
-            180 -> Point(currentCenter.x+value,currentCenter.y)
-            270 -> Point(currentCenter.x,currentCenter.y+value)
+            0F -> Point(currentCenter.x - value,currentCenter.y)
+            90F -> Point(currentCenter.x,currentCenter.y -value)
+            180F -> Point(currentCenter.x+value,currentCenter.y)
+            270F -> Point(currentCenter.x,currentCenter.y+value)
             else -> Point()
         }
 
