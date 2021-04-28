@@ -1,17 +1,19 @@
-package cn.skullmind.mbp.mymeng.Fibonacci
+package cn.skullmind.mbp.mymeng.fibonacci
 
 import android.graphics.Point
 import android.graphics.RectF
 
 object Fibonacci {
-    fun draw(initP1:Int = 0, initP2:Int = 1, initCenter:Point, drawArc: (angle:Int,rectF:RectF) -> Unit){
+    fun draw(initP1:Int = 0, initP2:Int = 1, initAngle:Int = 0,
+             initCenter:Point,
+             drawArc: (angle:Int,rectF:RectF) -> Unit){
 
         var center = initCenter
         var a = initP1
         var b = initP2
-
-        var angleStart  = 0
+        var angleStart  = initAngle
         var radius = a
+
         while (a < 1000){
             if(canDrawArc(radius)){
                 drawArc(angleStart,getArcRectF(radius,center))
@@ -24,8 +26,8 @@ object Fibonacci {
             if(canDrawArc(radius)){
                 angleStart += 90
                 center = getNextCenter(center,angleStart,a - radius)
-                radius = a
             }
+            radius = a
         }
 
 
@@ -42,8 +44,8 @@ object Fibonacci {
         return RectF(left,top,right,bottom)
     }
 
-    private fun getNextCenter(currentCenter:Point, angle:Int, value: Int):Point{
-        return when(angle % 360){
+    private fun getNextCenter(currentCenter:Point, startAngle:Int, value: Int):Point{
+        return when(startAngle % 360){
             0 -> Point(currentCenter.x - value,currentCenter.y)
             90 -> Point(currentCenter.x,currentCenter.y -value)
             180 -> Point(currentCenter.x+value,currentCenter.y)

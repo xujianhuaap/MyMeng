@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import cn.skullmind.mbp.mymeng.fibonacci.startFibonacciActivity
 import cn.skullmind.mbp.mymeng.pick_picture.startPickPictureActivity
 import cn.skullmind.mbp.mymeng.user.startUserActivity
 import cn.skullmind.mbp.mymeng.work_manager.ImageOptions
@@ -36,6 +37,10 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.tv_user).setOnClickListener {
             startUserActivity(this)
+
+        }
+        findViewById<View>(R.id.tv_fibonacci).setOnClickListener {
+            startFibonacciActivity(this)
 
         }
 

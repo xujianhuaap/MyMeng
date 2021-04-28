@@ -41,16 +41,16 @@
             android:text="@string/function_user">
 
         </TextView>
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_fibonacci"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/dimen_5"
-            android:orientation="horizontal"
-            android:background="@color/colorPrimaryDark">
-            <cn.skullmind.mbp.mymeng.Fibonacci.FibonacciView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="18sp"
+            android:text="@string/fibonacci_name">
+
+        </TextView>
+
 
 
 

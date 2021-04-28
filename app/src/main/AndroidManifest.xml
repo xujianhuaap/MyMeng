@@ -25,6 +25,7 @@
         </activity>
         <activity android:name=".pick_picture.PickPictureActivity"></activity>
         <activity android:name=".user.UserActivity"/>
+        <activity android:name=".fibonacci.FibonacciActivity"></activity>
     </application>
 
 </manifest>

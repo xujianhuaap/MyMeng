@@ -18,4 +18,6 @@
     <string name="user_query"> query all </string>
     <string name="user_delete"> delete all </string>
     <string name="user_add"> add user </string>
+
+    <string name="fibonacci_name">斐波那契螺旋曲线</string>
 </resources>

@@ -1,18 +1,20 @@
-package cn.skullmind.mbp.mymeng.Fibonacci
+package cn.skullmind.mbp.mymeng.fibonacci.widget
 
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import cn.skullmind.mbp.mymeng.fibonacci.Fibonacci
 
-class FibonacciView: View {
-    var canvas:Canvas? = null
-    val  paint:Paint = Paint().also {
+class FibonacciView : View {
+    private var canvas: Canvas? = null
+    private val paint: Paint = Paint().also {
         it.color = Color.GREEN
         it.strokeWidth = 4.0f
         it.style = Paint.Style.STROKE
         it.isAntiAlias = true
     }
+
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -21,24 +23,21 @@ class FibonacciView: View {
         defStyleAttr
     )
 
-    constructor(
-        context: Context?,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes)
-
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        val center = Point(400,500)
-        if (this.canvas == null && canvas != null){
+        val center = getViewCenter()
+        if (this.canvas == null && canvas != null) {
             this.canvas = canvas
         }
-        Fibonacci.draw(80,120,center,this::drawArc)
+        Fibonacci.draw(initAngle = 180,initCenter = center, drawArc = this::drawArc)
     }
 
-    fun drawArc(angle:Int,rectF: RectF){
+    private fun getViewCenter(): Point {
+        return Point(width / 2, height / 2)
+    }
 
-        paint.let { canvas?.drawArc(rectF,angle.toFloat(),90.0f,false, it) }
+    private fun drawArc(angle: Int, rectF: RectF) {
+
+        paint.let { canvas?.drawArc(rectF, angle.toFloat(), 90.0f, false, it) }
     }
 }
