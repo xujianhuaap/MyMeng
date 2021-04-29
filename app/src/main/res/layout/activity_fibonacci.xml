@@ -24,6 +24,14 @@
             android:textSize="@dimen/font_20"
             android:onClick="@{v -> vm.onChange()}"
             />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{vm.label}"
+            android:gravity="center"
+            android:padding="@dimen/dimen_10"
+            android:textSize="@dimen/font_20"
+            />
         <cn.skullmind.mbp.mymeng.fibonacci.widget.FibonacciView
             android:layout_width="match_parent"
             android:layout_height="@dimen/dimen_600"

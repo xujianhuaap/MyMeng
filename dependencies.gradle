@@ -5,7 +5,11 @@ ext {
             lifecycle_version: '2.2.0',
             arch_core_version: '2.1.0',
             work_version     : '2.5.0',
-            room_version     : "2.2.6"
+            room_version     : "2.2.6",
+            retrofit_version : "2.9.0",
+            gson_version: "2.8.5",
+            logging_intercepter_version : "3.12.0",
+            koltin_coroutines_android_version : "1.3.5",
     ]
 
     android_module = [
@@ -37,6 +41,17 @@ ext {
             // optional - Kotlin Extensions and Coroutines support for Room
             room_ktx             : "androidx.room:room-ktx:${android_versions.room_version}",
             //========================== room =======================================================
+
+            //============================= retrofit ===============================================
+            retrotit2 : "com.squareup.retrofit2:retrofit:${android_versions.retrofit_version}",
+            gson: "com.google.code.gson:gson: ${android_versions.gson_version}",
+            retrofit_convert_gson: "com.squareup.retrofit2:converter-gson:${android_versions.retrofit_version}",
+            logging_intercepter: "com.squareup.okhttp3:logging-interceptor:${android_versions.logging_intercepter_version}",
+            //============================= retrofit ===================================================
+
+            //=================== coroutine ===========================================================
+            koltin_coroutines_android: "org.jetbrains.kotlinx:kotlinx-coroutines-android:${android_versions.koltin_coroutines_android_version}"
+            //=================== coroutine ===========================================================
     ]
 
     android_test_module = [
