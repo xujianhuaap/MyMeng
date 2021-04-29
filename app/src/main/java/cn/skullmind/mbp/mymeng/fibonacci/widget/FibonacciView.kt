@@ -10,8 +10,12 @@ import cn.skullmind.mbp.mymeng.fibonacci.Fibonacci
 class FibonacciView : View {
     // private can not use,or can not use in layout by model
     var startAngle: Float = 0.0f
+        set(value) {
+            field = value
+            postInvalidate()
+        }
 
-    private var canvas: Canvas? = null
+    private lateinit var canvas: Canvas
     private val paint: Paint = Paint().also {
         it.color = Color.GREEN
         it.strokeWidth = 4.0f
@@ -48,10 +52,11 @@ class FibonacciView : View {
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         val center = getViewCenter()
-        if (this.canvas == null && canvas != null) {
+        canvas?.also {
             this.canvas = canvas
+            Fibonacci.draw(20,40,initAngle = startAngle, initCenter = center, drawArc = this::drawArc)
+
         }
-        Fibonacci.draw(20,40,initAngle = startAngle, initCenter = center, drawArc = this::drawArc)
     }
 
     private fun getViewCenter(): Point {
@@ -60,6 +65,6 @@ class FibonacciView : View {
 
     private fun drawArc(angle: Float, rectF: RectF) {
 
-        paint.let { canvas?.drawArc(rectF, angle, 90.0f, false, it) }
+        paint.let { canvas.drawArc(rectF, angle, 90.0f, false, it) }
     }
 }

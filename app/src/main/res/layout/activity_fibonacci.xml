@@ -3,8 +3,8 @@
     <data>
         <import type="androidx.databinding.ObservableField"></import>
         <variable
-            name="fibonacciModel"
-            type="cn.skullmind.mbp.mymeng.fibonacci.FibonacciInfo" />
+            name="vm"
+            type="cn.skullmind.mbp.mymeng.fibonacci.FibonacciViewModel" />
     </data>
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,18 +22,19 @@
             android:gravity="center"
             android:padding="@dimen/dimen_10"
             android:textSize="@dimen/font_20"
+            android:onClick="@{v -> vm.onChange()}"
             />
         <cn.skullmind.mbp.mymeng.fibonacci.widget.FibonacciView
             android:layout_width="match_parent"
             android:layout_height="@dimen/dimen_600"
             app:lineWidth="@dimen/dimen_4"
-            app:startAngle="@{(Float)fibonacciModel.startAngle}"
+            app:startAngle="@{vm.fibonacciInfo.startAngle}"
             />
         <TextView
             android:id="@+id/tv_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
+            android:text="@{vm.fibonacciInfo.label}"
             android:gravity="center"
             android:layout_marginTop="@dimen/dimen_10"
             android:textSize="@dimen/font_17"
