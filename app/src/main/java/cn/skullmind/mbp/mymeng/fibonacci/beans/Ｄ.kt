@@ -1,4 +1,4 @@
-package cn.skullmind.mbp.mymeng.fibonacci.widget
+package cn.skullmind.mbp.mymeng.fibonacci.beans
 import com.google.gson.annotations.SerializedName
 
 
