@@ -50,6 +50,15 @@
             android:text="@string/fibonacci_name">
 
         </TextView>
+        <TextView
+            android:id="@+id/tv_chrome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="18sp"
+            android:text="@string/chrome_name">
+
+        </TextView>
 
 
 

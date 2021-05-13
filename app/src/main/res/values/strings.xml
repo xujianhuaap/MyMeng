@@ -20,4 +20,5 @@
     <string name="user_add"> add user </string>
 
     <string name="fibonacci_name">斐波那契螺旋曲线</string>
+    <string name="chrome_name">Chrome Logo</string>
 </resources>
