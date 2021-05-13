@@ -10,11 +10,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toEndOf="parent">
-        <cn.skullmind.mbp.mymeng.widget.BenchView
+        <cn.skullmind.mbp.mymeng.widget.ChromeView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </cn.skullmind.mbp.mymeng.widget.BenchView>
+        </cn.skullmind.mbp.mymeng.widget.ChromeView>
 
     </LinearLayout>
 </layout>
