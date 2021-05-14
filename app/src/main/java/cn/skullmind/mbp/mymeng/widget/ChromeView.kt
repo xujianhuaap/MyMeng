@@ -42,68 +42,89 @@ class ChromeView : View {
 //            drawCircle( centerX, centerY, innerRadius,it,resources.getColor(R.color.color_blue_2196F3))
 //            drawStrokeCircle( centerX, centerY, innerRadius1,strokeWidth1,it,resources.getColor(R.color.color_green_8FEC8C))
 
-            it.save()
-            val path = Path()
+            val start = drawOutRing(it, innerRadius1, centerX, centerY, outRadius,Math.PI / 2, resources.getColor(R.color.color_red),true)
 
-            val degree_0 = Math.PI/2
-            val x = Math.cos(degree_0)*innerRadius1+centerX
-            val y = - Math.sin(degree_0)*innerRadius1 + centerY
-            val point_0 = PointF(x.toFloat(), y.toFloat())
-
-
-            val degree_offset = acos((innerRadius1/outRadius))
-
-
-            val degree_1 = degree_0 - degree_offset
-            val x_1 = Math.cos(degree_1)*outRadius + centerX
-            val y_1 = - Math.sin(degree_1)*outRadius +centerY
-            val point_1 = PointF(x_1.toFloat(), y_1.toFloat())
-
-
-            val degree_3 = degree_0 + DegreeUtils.toRadians(240.0)
-            val x_3 = Math.cos(degree_3)*innerRadius1+centerX
-            val y_3 = -Math.sin(degree_3)*innerRadius1 + centerY
-            val point_3 = PointF(x_3.toFloat(), y_3.toFloat())
-
-            val degree_2 = degree_3 - degree_offset
-            val x_2 = Math.cos(degree_2)*outRadius+centerX
-            val y_2 = -Math.sin(degree_2)*outRadius + centerY
-            val point_2 = PointF(x_2.toFloat(), y_2.toFloat())
-
-            val left = centerX - outRadius
-            val top = centerY - outRadius
-            val right = centerX + outRadius
-            val bottom = centerY + outRadius
-            val rectF = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
-            val startAngle = DegreeUtils.toDegree(Math.PI *2 - degree_0 + degree_offset)
-            val sweepAngle = DegreeUtils.toDegree(Math.PI *2 - degree_2)
-
-
-
-            val leftForInner = centerX - innerRadius1
-            val topForInner = centerY - innerRadius1
-            val rightForInner = centerX + innerRadius1
-            val bottomForInner = centerY + innerRadius1
-            val rectFForInner = RectF(leftForInner.toFloat(), topForInner.toFloat(),
-                rightForInner.toFloat(), bottomForInner.toFloat())
-            val startAngleForInner = DegreeUtils.toDegree(Math.PI *2 - degree_0)
-            val sweepAngleForInner = DegreeUtils.toDegree(Math.PI *2/3)
-
-            path.moveTo(point_0.x,point_0.y)
-            path.lineTo(point_1.x,point_1.y)
-            path.addArc(rectF, startAngle.toFloat(),sweepAngle.toFloat())
-            path.lineTo(point_3.x,point_3.y)
-            path.arcTo(rectFForInner, startAngleForInner.toFloat(),sweepAngleForInner.toFloat())
-            path.close()
-
-            paint.style = Paint.Style.STROKE
-            paint.strokeWidth = 5.0f
-            paint.color = resources.getColor(R.color.color_red)
-            it.drawPath(path,paint)
-            it.restore()
-
+//            drawOutRing(it, innerRadius1, centerX, centerY, outRadius,Math.PI*11/6,resources.getColor(R.color.color_green_0ADA03),false)
         }
 
+    }
+
+    private fun drawOutRing(
+        it: Canvas,
+        innerRadius1: Double,
+        centerX: Float,
+        centerY: Float,
+        outRadius: Double,
+        startRadiant:Double,
+        @ColorInt color: Int,
+        active: Boolean
+    ):Double {
+        it.save()
+        val path = Path()
+
+        val degree_0 = startRadiant
+        val x = Math.cos(degree_0) * innerRadius1 + centerX
+        val y = -Math.sin(degree_0) * innerRadius1 + centerY
+        val point_0 = PointF(x.toFloat(), y.toFloat())
+
+
+        val degree_offset = acos((innerRadius1 / outRadius))
+
+
+        val degree_1 = degree_0 - degree_offset
+        val x_1 = Math.cos(degree_1) * outRadius + centerX
+        val y_1 = -Math.sin(degree_1) * outRadius + centerY
+        val point_1 = PointF(x_1.toFloat(), y_1.toFloat())
+
+
+        val toRadians = if(active) DegreeUtils.toRadians(240.0) else DegreeUtils.toRadians(-120.0)
+        val degree_3 = degree_0 + toRadians
+        val x_3 = Math.cos(degree_3) * innerRadius1 + centerX
+        val y_3 = -Math.sin(degree_3) * innerRadius1 + centerY
+        val point_3 = PointF(x_3.toFloat(), y_3.toFloat())
+
+        val degree_2 = degree_3 - degree_offset
+        val x_2 = Math.cos(degree_2) * outRadius + centerX
+        val y_2 = -Math.sin(degree_2) * outRadius + centerY
+        val point_2 = PointF(x_2.toFloat(), y_2.toFloat())
+
+        val left = centerX - outRadius
+        val top = centerY - outRadius
+        val right = centerX + outRadius
+        val bottom = centerY + outRadius
+        val rectF = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+        val startAngle = DegreeUtils.toDegree(Math.PI * 2 - degree_1)
+
+        val sweepAngle = if(active)DegreeUtils.toDegree(Math.PI * 2 - degree_2 + degree_1) else degree_1 - degree_2
+
+
+        val leftForInner = centerX - innerRadius1
+        val topForInner = centerY - innerRadius1
+        val rightForInner = centerX + innerRadius1
+        val bottomForInner = centerY + innerRadius1
+        val rectFForInner = RectF(
+            leftForInner.toFloat(), topForInner.toFloat(),
+            rightForInner.toFloat(), bottomForInner.toFloat()
+        )
+        val startAngleForInner = DegreeUtils.toDegree(Math.PI * 2 - degree_0)
+        val sweepAngleForInner = DegreeUtils.toDegree(Math.PI * 2 / 3)
+
+        path.moveTo(point_0.x, point_0.y)
+        path.addArc(rectFForInner, startAngleForInner.toFloat(), sweepAngleForInner.toFloat())
+        path.lineTo(point_1.x, point_1.y)
+        path.close()
+
+        path.moveTo(point_1.x, point_1.y)
+        path.addArc(rectF, startAngle.toFloat(), sweepAngle.toFloat())
+        path.lineTo(point_3.x, point_3.y)
+        path.close()
+
+        paint.style = Paint.Style.FILL
+        paint.strokeWidth = 5.0f
+        paint.color = color
+        it.drawPath(path, paint)
+        it.restore()
+        return degree_3
     }
 
     private fun drawCircle(
