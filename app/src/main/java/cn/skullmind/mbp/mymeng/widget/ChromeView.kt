@@ -31,20 +31,21 @@ class ChromeView : View {
         val centerY:Float = (outRadius + padding).toFloat()
 
 
-        val innerRadius = outRadius * 0.2
-        val strokeWidth = outRadius * 0.1
+        val innerRadius = outRadius * 0.4
 
-        val innerRadius1 = outRadius * 0.5
-        val strokeWidth1 = outRadius * 0.5
+        val innerRadius1 = 0.9*outRadius - innerRadius
 
 
         canvas?.also {
-//            drawCircle( centerX, centerY, innerRadius,it,resources.getColor(R.color.color_blue_2196F3))
-//            drawStrokeCircle( centerX, centerY, innerRadius1,strokeWidth1,it,resources.getColor(R.color.color_green_8FEC8C))
+            drawCircle( centerX, centerY, innerRadius.toFloat(),it,resources.getColor(R.color.color_blue_2196F3))
+            drawStrokeCircle( centerX, centerY, innerRadius1.toFloat(),
+                0.0f,it,resources.getColor(R.color.color_green_8FEC8C))
 
-            val start = drawOutRing(it, innerRadius1, centerX, centerY, outRadius,Math.PI / 2, resources.getColor(R.color.color_red),true)
+            var start = drawOutRing(it, innerRadius1, centerX, centerY, outRadius,Math.PI / 2, resources.getColor(R.color.color_yellow_FFC922),true)
 
-//            drawOutRing(it, innerRadius1, centerX, centerY, outRadius,Math.PI*11/6,resources.getColor(R.color.color_green_0ADA03),false)
+            start = drawOutRing(it, innerRadius1, centerX, centerY, outRadius,start,resources.getColor(R.color.color_green_337934),false)
+            drawOutRing(it, innerRadius1, centerX, centerY, outRadius,start,resources.getColor(R.color.color_orange_FF5F20),false)
+
         }
 
     }
@@ -94,8 +95,7 @@ class ChromeView : View {
         val bottom = centerY + outRadius
         val rectF = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
         val startAngle = DegreeUtils.toDegree(Math.PI * 2 - degree_1)
-
-        val sweepAngle = if(active)DegreeUtils.toDegree(Math.PI * 2 - degree_2 + degree_1) else degree_1 - degree_2
+        val sweepAngle = if(active)DegreeUtils.toDegree(Math.PI * 2 - degree_2 + degree_1) else DegreeUtils.toDegree(degree_1 - degree_2)
 
 
         val leftForInner = centerX - innerRadius1
@@ -116,7 +116,7 @@ class ChromeView : View {
 
         path.moveTo(point_1.x, point_1.y)
         path.addArc(rectF, startAngle.toFloat(), sweepAngle.toFloat())
-        path.lineTo(point_3.x, point_3.y)
+//        path.lineTo(point_3.x, point_3.y)
         path.close()
 
         paint.style = Paint.Style.FILL
@@ -155,7 +155,7 @@ class ChromeView : View {
         paint.isAntiAlias = false
         paint.strokeWidth = strokeWidth
         paint.style = Paint.Style.STROKE
-        it.drawCircle(centerX.toFloat(), centerY.toFloat(), radius, paint)
+        it.drawCircle(centerX, centerY, radius, paint)
         it.restore()
     }
 }
