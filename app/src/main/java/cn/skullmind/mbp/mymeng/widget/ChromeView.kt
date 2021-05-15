@@ -8,14 +8,11 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import cn.skullmind.mbp.mymeng.R
 import cn.skullmind.mbp.mymeng.utils.DegreeUtils
-import kotlin.math.acos
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
+import kotlin.math.*
 
 class ChromeView : View {
     private val padding = 5
-    private val startRadiant = Math.random() * Math.PI * 2
+    private val startRadiant = Math.PI/2
     private val paint = Paint()
 
     private lateinit var firstPartRing: PartRing
@@ -90,8 +87,7 @@ class ChromeView : View {
             centerY,
             outRadius,
             startRadiant,
-            getColor(colorId),
-            positive
+            getColor(colorId)
         )
 
     private fun initData() {
@@ -154,8 +150,7 @@ class PartRing(
     private val centerY: Float,
     private val outRadius: Double,
     private val startRadiant: Double,
-    @ColorInt val color: Int,
-    private val active: Boolean
+    @ColorInt val color: Int
 ) {
 
     private fun getFirstPoint(): PointExt {
@@ -166,7 +161,7 @@ class PartRing(
     }
 
     private fun getSecondPoint(): PointExt {
-        val degree = getFirstPoint().radiant - getOffsetRadiant()
+        val degree = getFirstPoint().getRadiant() - getOffsetRadiant()
         val x = cos(degree) * outRadius + centerX
         val y = -sin(degree) * outRadius + centerY
         return PointExt(x.toFloat(), y.toFloat(), degree)
@@ -175,15 +170,15 @@ class PartRing(
     private fun getOffsetRadiant() = acos((innerRadius / outRadius))
 
     private fun getThirdPoint(): PointExt {
-        val degree = getFourthPoint().radiant - getOffsetRadiant()
+        val degree = getFourthPoint().getRadiant() - getOffsetRadiant()
         val x = cos(degree) * outRadius + centerX
         val y = -sin(degree) * outRadius + centerY
         return PointExt(x.toFloat(), y.toFloat(), degree)
     }
 
     private fun getFourthPoint(): PointExt {
-        val toRadians = if (active) DegreeUtils.toRadians(240.0) else DegreeUtils.toRadians(-120.0)
-        val degree = getFirstPoint().radiant + toRadians
+        val toRadians = DegreeUtils.toRadians(240.0)
+        val degree = getFirstPoint().getRadiant() + toRadians
         val x = cos(degree) * innerRadius + centerX
         val y = -sin(degree) * innerRadius + centerY
         return PointExt(x.toFloat(), y.toFloat(), degree)
@@ -199,15 +194,14 @@ class PartRing(
 
 
     private fun getOutArcStartAngle(): Double {
-        return DegreeUtils.toDegree(Math.PI * 2 - getSecondPoint().radiant)
+        return DegreeUtils.toDegree( - getSecondPoint().getRadiant())
     }
 
     private fun getOutArcSweepAngle(): Double {
-        val thirdPointRadiant = getThirdPoint().radiant
-        val secondPointRadiant = getSecondPoint().radiant
-        return if (active) DegreeUtils.toDegree(Math.PI * 2 - thirdPointRadiant + secondPointRadiant) else DegreeUtils.toDegree(
-            secondPointRadiant - thirdPointRadiant
-        )
+        val thirdPointRadiant = getThirdPoint().getRadiant()
+        val secondPointRadiant = getSecondPoint().getRadiant()
+        val radians = abs(thirdPointRadiant - secondPointRadiant)
+        return DegreeUtils.toDegree(min(radians,Math.PI*2 - radians))
     }
 
     private fun getInnerRect(): RectF {
@@ -219,7 +213,7 @@ class PartRing(
     }
 
     private fun getInnerArcStartAngle(): Double =
-        DegreeUtils.toDegree(Math.PI * 2 - getFirstPoint().radiant)
+        DegreeUtils.toDegree(- getFirstPoint().getRadiant())
 
     private fun getInnerArcSweepAngle(): Double = DegreeUtils.toDegree(Math.PI * 2 / 3)
 
@@ -244,7 +238,7 @@ class PartRing(
         paint.color = color
         canvas.drawPath(path, paint)
         canvas.restore()
-        return getFourthPoint().radiant
+        return getFourthPoint().getRadiant()
     }
 
     companion object {
@@ -254,14 +248,19 @@ class PartRing(
             centerY: Float,
             outRadius: Double,
             startRadiant: Double,
-            @ColorInt color: Int,
-            positive: Boolean
-        ): PartRing =
-            PartRing(innerRadius, centerX, centerY, outRadius, startRadiant, color, positive)
+            @ColorInt color: Int
+        ): PartRing {
+            val startRadiant1 = startRadiant % (Math.PI * 2)
+            return PartRing(innerRadius, centerX, centerY, outRadius, startRadiant1, color)
+        }
     }
 }
 
 /***
  *@param radiant 是Radiant 单位 而非 degree
  */
-class PointExt(x: Float, y: Float, val radiant: Double) : PointF(x, y)
+class PointExt(x: Float, y: Float, private val radiant: Double) : PointF(x, y){
+    fun getRadiant():Double{
+        return radiant % (Math.PI*2)
+    }
+}
