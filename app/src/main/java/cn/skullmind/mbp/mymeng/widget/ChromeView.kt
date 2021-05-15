@@ -15,15 +15,17 @@ import kotlin.math.sin
 
 class ChromeView : View {
     private val padding = 5
+    private val startRadiant = Math.random() * Math.PI * 2
     private val paint = Paint()
+
     private lateinit var firstPartRing: PartRing
     private lateinit var secondPartRing: PartRing
     private lateinit var thirdPartRing: PartRing
-    private  var outRadius: Double = 0.0
-    private  var centerX: Float = 0.0f
-    private  var centerY: Float = 0.0f
-    private var innerRadius  = 0.0
-    private var innerRadius1  = 0.0
+    private var outRadius: Double = 0.0
+    private var centerX: Float = 0.0f
+    private var centerY: Float = 0.0f
+    private var innerRadius = 0.0
+    private var innerRadius1 = 0.0
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -38,57 +40,59 @@ class ChromeView : View {
         initData()
         canvas?.also {
             drawCircle(
-                centerX,
-                centerY,
                 innerRadius.toFloat(),
                 it,
                 getColor(R.color.color_blue_2196F3)
             )
             drawStrokeCircle(
-                centerX, centerY, innerRadius1.toFloat(),it, getColor(R.color.color_green_8FEC8C)
+                innerRadius1.toFloat(), it, getColor(R.color.color_green_8FEC8C)
             )
 
-            if(!this::firstPartRing.isInitialized){
-                firstPartRing = PartRing(
-                    innerRadius1,
-                    centerX,
-                    centerY,
-                    outRadius,
-                    Math.PI / 2,
-                    getColor(R.color.color_yellow_FFC922),
-                    true
-                )
-            }
-            var start = firstPartRing.draw(canvas,paint)
-
-            if(!this::secondPartRing.isInitialized){
-                secondPartRing = PartRing(
-                    innerRadius1,
-                    centerX,
-                    centerY,
-                    outRadius,
-                    start,
-                    getColor(R.color.color_green_337934),
-                    false
-                )
-            }
-            start = secondPartRing.draw(canvas,paint)
-            if(!this::thirdPartRing.isInitialized){
-                thirdPartRing =  PartRing(
-                    innerRadius1,
-                    centerX,
-                    centerY,
-                    outRadius,
-                    start,
-                    getColor(R.color.color_orange_FF5F20),
-                    false
-                )
-            }
-           thirdPartRing.draw(canvas,paint)
-
+            drawRing(canvas)
         }
 
     }
+
+    private fun drawRing(canvas: Canvas) {
+        firstPartRing.draw(canvas, paint)
+        this.secondPartRing.draw(canvas, paint)
+        this.thirdPartRing.draw(canvas, paint)
+    }
+
+    private fun initRingData(startRadiant: Double) {
+        val secondRadiant = startRadiant + Math.PI * 2 / 3
+        val thirdRadiant = secondRadiant + Math.PI * 2 / 3
+        if (!this::firstPartRing.isInitialized) {
+            firstPartRing = getPositivePartRing(startRadiant)
+        }
+
+
+        if (!this::secondPartRing.isInitialized) {
+            this.secondPartRing = getNegativePartRing(secondRadiant, R.color.color_orange_FF5F20)
+        }
+
+
+        if (!this::thirdPartRing.isInitialized) {
+            this.thirdPartRing = getNegativePartRing(thirdRadiant, R.color.color_green_337934)
+        }
+    }
+
+    private fun getPositivePartRing(startRadiant: Double) =
+        getPartRing(startRadiant, R.color.color_yellow_FFC922, true)
+
+    private fun getNegativePartRing(startRadiant: Double, @ColorRes colorId: Int) =
+        getPartRing(startRadiant, colorId, false)
+
+    private fun getPartRing(startRadiant: Double, @ColorRes colorId: Int, positive: Boolean) =
+        PartRing.getInstance(
+            innerRadius1,
+            centerX,
+            centerY,
+            outRadius,
+            startRadiant,
+            getColor(colorId),
+            positive
+        )
 
     private fun initData() {
         if (outRadius == 0.0) {
@@ -108,14 +112,14 @@ class ChromeView : View {
         if (innerRadius1 == 0.0) {
             innerRadius1 = 0.9 * outRadius - innerRadius
         }
+
+        initRingData(startRadiant)
     }
 
     @Suppress("DEPRECATION")
-    private fun getColor(@ColorRes resId:Int) = resources.getColor(resId)
+    private fun getColor(@ColorRes resId: Int) = resources.getColor(resId)
 
     private fun drawCircle(
-        centerX: Float,
-        centerY: Float,
         radius: Float,
         it: Canvas,
         @ColorInt color: Int
@@ -130,8 +134,6 @@ class ChromeView : View {
     }
 
     private fun drawStrokeCircle(
-        centerX: Float,
-        centerY: Float,
         radius: Float,
         it: Canvas,
         @ColorInt color: Int
@@ -221,7 +223,7 @@ class PartRing(
 
     private fun getInnerArcSweepAngle(): Double = DegreeUtils.toDegree(Math.PI * 2 / 3)
 
-    fun draw(canvas: Canvas,paint:Paint): Double {
+    fun draw(canvas: Canvas, paint: Paint): Double {
         canvas.save()
         val path = Path()
         path.moveTo(getFirstPoint().x, getFirstPoint().y)
@@ -245,6 +247,18 @@ class PartRing(
         return getFourthPoint().radiant
     }
 
+    companion object {
+        fun getInstance(
+            innerRadius: Double,
+            centerX: Float,
+            centerY: Float,
+            outRadius: Double,
+            startRadiant: Double,
+            @ColorInt color: Int,
+            positive: Boolean
+        ): PartRing =
+            PartRing(innerRadius, centerX, centerY, outRadius, startRadiant, color, positive)
+    }
 }
 
 /***
