@@ -12,7 +12,7 @@ import kotlin.math.*
 
 class ChromeView : View {
     private val padding = 5
-    private val startRadiant = Math.PI/2
+    private val startRadiant = Math.random()*Math.PI*2
     private val paint = Paint()
 
     private lateinit var firstPartRing: PartRing
@@ -22,7 +22,7 @@ class ChromeView : View {
     private var centerX: Float = 0.0f
     private var centerY: Float = 0.0f
     private var innerRadius = 0.0
-    private var innerRadius1 = 0.0
+    private var middleRadius = 0.0
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -42,10 +42,10 @@ class ChromeView : View {
                 getColor(R.color.color_blue_2196F3)
             )
             drawStrokeCircle(
-                innerRadius1.toFloat(), it, getColor(R.color.color_green_8FEC8C)
+                middleRadius.toFloat(), it, getColor(R.color.color_green_8FEC8C)
             )
 
-            drawRing(canvas)
+            drawRing(it)
         }
 
     }
@@ -82,7 +82,7 @@ class ChromeView : View {
 
     private fun getPartRing(startRadiant: Double, @ColorRes colorId: Int, positive: Boolean) =
         PartRing.getInstance(
-            innerRadius1,
+            middleRadius,
             centerX,
             centerY,
             outRadius,
@@ -91,9 +91,11 @@ class ChromeView : View {
         )
 
     private fun initData() {
+
         if (outRadius == 0.0) {
             outRadius = ((min(this.width, this.height) - padding * 2) / 2).toDouble()
         }
+
         if (centerX == 0.0f) {
             centerX = (outRadius + padding).toFloat()
         }
@@ -101,14 +103,16 @@ class ChromeView : View {
             centerY = (outRadius + padding).toFloat()
         }
 
+
+
+
+
+        if (middleRadius == 0.0) {
+            middleRadius = 0.5 * outRadius
+        }
         if (innerRadius == 0.0) {
-            innerRadius = outRadius * 0.4
+            innerRadius = middleRadius * 0.75
         }
-
-        if (innerRadius1 == 0.0) {
-            innerRadius1 = 0.9 * outRadius - innerRadius
-        }
-
         initRingData(startRadiant)
     }
 
@@ -136,7 +140,7 @@ class ChromeView : View {
     ) {
         it.save()
         paint.color = color
-        paint.isAntiAlias = false
+        paint.isAntiAlias = true
         paint.style = Paint.Style.STROKE
         it.drawCircle(centerX, centerY, radius, paint)
         it.restore()
