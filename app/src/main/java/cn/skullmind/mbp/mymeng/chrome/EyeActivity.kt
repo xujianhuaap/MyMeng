@@ -2,18 +2,16 @@ package cn.skullmind.mbp.mymeng.chrome
 
 import android.content.Intent
 import android.hardware.Sensor
-import android.hardware.Sensor.TYPE_GRAVITY
+import android.hardware.Sensor.TYPE_GYROSCOPE
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import android.os.Bundle
-import android.util.Half.EPSILON
 import androidx.appcompat.app.AppCompatActivity
 import cn.skullmind.mbp.mymeng.R
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
+import cn.skullmind.mbp.mymeng.utils.DegreeUtils
+import cn.skullmind.mbp.mymeng.widget.EyeView
 
 
 fun startEyeActivity(context: AppCompatActivity) {
@@ -22,45 +20,49 @@ fun startEyeActivity(context: AppCompatActivity) {
 }
 
 class EyeActivity : AppCompatActivity() {
+    private var gx = 0f
+    private  var gy = 0f
+    private  var gz = 0f
     private val NS2S = 1.0f / 1000000000.0f
-    private val deltaRotationVector = FloatArray(4)
+    private val angle = FloatArray(3)
+    private lateinit var eyeView: EyeView
     private lateinit var sensorManager: SensorManager
     private var timestamp: Long = 0
     private val sensorListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
             event?.also {
                 if (timestamp != 0L) {
-                    val dT = (event.timestamp - timestamp) * NS2S
-                    // Axis of the rotation sample, not normalized yet.
-                    var axisX = it.values[0]
-                    var axisY = it.values[1]
-                    var axisZ = it.values[2]
+                    val dT: Float = (it.timestamp - timestamp) * NS2S
+                    angle[0] += it.values[0] * dT
+                    angle[1] += it.values[1] * dT
+                    angle[2] += it.values[2] * dT
+                    val anglex = DegreeUtils.toDegree(angle[0].toDouble()).toFloat()
+                    val angley = DegreeUtils.toDegree(angle[1].toDouble()).toFloat()
+                    val anglez = DegreeUtils.toDegree(angle[2].toDouble()).toFloat()
 
-                    // Calculate the angular speed of the sample
-                    val omegaMagnitude = sqrt(axisX * axisX + axisY * axisY + axisZ * axisZ)
-
-                    // Normalize the rotation vector if it's big enough to get the axis
-                    if (omegaMagnitude > EPSILON) {
-                        axisX /= omegaMagnitude
-                        axisY /= omegaMagnitude
-                        axisZ /= omegaMagnitude
+                    if (gx !== 0f) {
+                        val c: Float = gx - anglex
+                        if (Math.abs(c) >= 0.5) {
+                            gx = anglex
+                        }
+                    } else {
+                        gx = anglex
+                    }
+                    if (gy !== 0f) {
+                        val c: Float = gy - angley
+                        if (Math.abs(c) >= 0.5) {
+                            gy = angley
+                        }
+                    } else {
+                        gy = angley
                     }
 
-                    // Integrate around this axis with the angular speed by the time step
-                    // in order to get a delta rotation from this sample over the time step
-                    // We will convert this axis-angle representation of the delta rotation
-                    // into a quaternion before turning it into the rotation matrix.
-                    val thetaOverTwo = omegaMagnitude * dT / 2.0f
-                    val sinThetaOverTwo = sin(thetaOverTwo)
-                    val cosThetaOverTwo = cos(thetaOverTwo)
-                    deltaRotationVector[0] = sinThetaOverTwo * axisX
-                    deltaRotationVector[1] = sinThetaOverTwo * axisY
-                    deltaRotationVector[2] = sinThetaOverTwo * axisZ
-                    deltaRotationVector[3] = cosThetaOverTwo
+                    gz = anglez
                 }
                 timestamp = it.timestamp
-                val deltaRotationMatrix = FloatArray(9)
-                SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector)
+
+                eyeView.refreshRotate(gx,gy)
+
             }
 
         }
@@ -73,6 +75,7 @@ class EyeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_eye_view)
+        eyeView = findViewById<EyeView>(R.id.view_eye)
         initSensorManger()
     }
 
@@ -87,7 +90,7 @@ class EyeActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val sensor = sensorManager.getDefaultSensor(TYPE_GRAVITY)
+        val sensor = sensorManager.getDefaultSensor(TYPE_GYROSCOPE)
         sensorManager.registerListener(sensorListener, sensor, SENSOR_DELAY_NORMAL)
     }
 

@@ -11,6 +11,7 @@
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toEndOf="parent">
         <cn.skullmind.mbp.mymeng.widget.EyeView
+            android:id="@+id/view_eye"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 

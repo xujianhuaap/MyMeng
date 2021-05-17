@@ -7,7 +7,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import cn.skullmind.mbp.mymeng.R
-import cn.skullmind.mbp.mymeng.utils.DegreeUtils
+import cn.skullmind.mbp.mymeng.utils.LogUtil
 import kotlin.math.*
 
 class EyeView : View {
@@ -16,6 +16,8 @@ class EyeView : View {
 
     private lateinit var camera: Camera
     private lateinit var cameraMatrix:Matrix
+    private var rotateX:Float = 0.0F
+    private var rotateY:Float = 0.0F
     private var outRadius: Double = 0.0
     private var centerX: Float = 0.0f
     private var centerY: Float = 0.0f
@@ -30,18 +32,26 @@ class EyeView : View {
         defStyleAttr
     )
 
+    fun refreshRotate(rotateX: Float, rotateY: Float){
+        LogUtil.d("----", "$rotateX ---  ${rotateY}")
+        this.rotateX = rotateX
+        this.rotateY = rotateY
+        invalidate()
+    }
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         initData()
         canvas?.also {
             cameraMatrix.reset()
             camera.save()
-            camera.rotateX(30f)
+            camera.rotateX(rotateX)
+            camera.rotateY(rotateY)
             camera.getMatrix(cameraMatrix)
             cameraMatrix.preTranslate(-centerX,-centerY)
             cameraMatrix.postTranslate(centerX,centerY)
             camera.restore()
             it.concat(cameraMatrix)
+
             drawCircle(
                 innerRadius.toFloat(),
                 it,
