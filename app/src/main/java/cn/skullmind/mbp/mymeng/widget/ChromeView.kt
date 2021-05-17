@@ -12,7 +12,7 @@ import kotlin.math.*
 
 class ChromeView : View {
     private val padding = 5
-    private val startRadiant = Math.random()*Math.PI*2
+    private val startRadiant = Math.random() * Math.PI * 2
     private val paint = Paint()
 
     private lateinit var firstPartRing: PartRing
@@ -60,27 +60,20 @@ class ChromeView : View {
         val secondRadiant = startRadiant + Math.PI * 2 / 3
         val thirdRadiant = secondRadiant + Math.PI * 2 / 3
         if (!this::firstPartRing.isInitialized) {
-            firstPartRing = getPositivePartRing(startRadiant)
+            firstPartRing = getPartRing(startRadiant, R.color.color_yellow_FFC922)
         }
 
-
         if (!this::secondPartRing.isInitialized) {
-            this.secondPartRing = getNegativePartRing(secondRadiant, R.color.color_orange_FF5F20)
+            this.secondPartRing = getPartRing(secondRadiant, R.color.color_orange_FF5F20)
         }
 
 
         if (!this::thirdPartRing.isInitialized) {
-            this.thirdPartRing = getNegativePartRing(thirdRadiant, R.color.color_green_337934)
+            this.thirdPartRing = getPartRing(thirdRadiant, R.color.color_green_337934)
         }
     }
 
-    private fun getPositivePartRing(startRadiant: Double) =
-        getPartRing(startRadiant, R.color.color_yellow_FFC922, true)
-
-    private fun getNegativePartRing(startRadiant: Double, @ColorRes colorId: Int) =
-        getPartRing(startRadiant, colorId, false)
-
-    private fun getPartRing(startRadiant: Double, @ColorRes colorId: Int, positive: Boolean) =
+    private fun getPartRing(startRadiant: Double, @ColorRes colorId: Int) =
         PartRing.getInstance(
             middleRadius,
             centerX,
@@ -198,14 +191,14 @@ class PartRing(
 
 
     private fun getOutArcStartAngle(): Double {
-        return DegreeUtils.toDegree( - getSecondPoint().getRadiant())
+        return DegreeUtils.toDegree(-getSecondPoint().getRadiant())
     }
 
     private fun getOutArcSweepAngle(): Double {
         val thirdPointRadiant = getThirdPoint().getRadiant()
         val secondPointRadiant = getSecondPoint().getRadiant()
         val radians = abs(thirdPointRadiant - secondPointRadiant)
-        return DegreeUtils.toDegree(min(radians,Math.PI*2 - radians))
+        return DegreeUtils.toDegree(min(radians, Math.PI * 2 - radians))
     }
 
     private fun getInnerRect(): RectF {
@@ -217,7 +210,7 @@ class PartRing(
     }
 
     private fun getInnerArcStartAngle(): Double =
-        DegreeUtils.toDegree(- getFirstPoint().getRadiant())
+        DegreeUtils.toDegree(-getFirstPoint().getRadiant())
 
     private fun getInnerArcSweepAngle(): Double = DegreeUtils.toDegree(Math.PI * 2 / 3)
 
@@ -263,8 +256,8 @@ class PartRing(
 /***
  *@param radiant 是Radiant 单位 而非 degree
  */
-class PointExt(x: Float, y: Float, private val radiant: Double) : PointF(x, y){
-    fun getRadiant():Double{
-        return radiant % (Math.PI*2)
+class PointExt(x: Float, y: Float, private val radiant: Double) : PointF(x, y) {
+    fun getRadiant(): Double {
+        return radiant % (Math.PI * 2)
     }
 }
