@@ -27,6 +27,7 @@
         <activity android:name=".pick_picture.PickPictureActivity"></activity>
         <activity android:name=".user.UserActivity"/>
         <activity android:name=".fibonacci.FibonacciActivity"></activity>
+        <activity android:name=".chrome.EyeActivity"></activity>
         <activity android:name=".chrome.ChromeActivity"></activity>
 
     </application>

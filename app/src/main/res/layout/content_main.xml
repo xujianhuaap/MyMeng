@@ -60,6 +60,16 @@
 
         </TextView>
 
+        <TextView
+            android:id="@+id/tv_eye_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="18sp"
+            android:text="@string/eye_name">
+
+        </TextView>
+
 
 
 
