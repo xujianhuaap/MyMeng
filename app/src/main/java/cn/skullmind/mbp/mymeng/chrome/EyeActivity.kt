@@ -10,7 +10,6 @@ import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import cn.skullmind.mbp.mymeng.R
-import cn.skullmind.mbp.mymeng.utils.DegreeUtils
 import cn.skullmind.mbp.mymeng.widget.EyeView
 
 
@@ -20,49 +19,13 @@ fun startEyeActivity(context: AppCompatActivity) {
 }
 
 class EyeActivity : AppCompatActivity() {
-    private var gx = 0f
-    private  var gy = 0f
-    private  var gz = 0f
-    private val NS2S = 1.0f / 1000000000.0f
-    private val angle = FloatArray(3)
+    private val gyroScopeConverter = EyeView.GyroScopeConverter()
     private lateinit var eyeView: EyeView
     private lateinit var sensorManager: SensorManager
-    private var timestamp: Long = 0
     private val sensorListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent?) {
             event?.also {
-                if (timestamp != 0L) {
-                    val dT: Float = (it.timestamp - timestamp) * NS2S
-                    angle[0] += it.values[0] * dT
-                    angle[1] += it.values[1] * dT
-                    angle[2] += it.values[2] * dT
-                    val anglex = DegreeUtils.toDegree(angle[0].toDouble()).toFloat()
-                    val angley = DegreeUtils.toDegree(angle[1].toDouble()).toFloat()
-                    val anglez = DegreeUtils.toDegree(angle[2].toDouble()).toFloat()
-
-                    if (gx !== 0f) {
-                        val c: Float = gx - anglex
-                        if (Math.abs(c) >= 0.5) {
-                            gx = anglex
-                        }
-                    } else {
-                        gx = anglex
-                    }
-                    if (gy !== 0f) {
-                        val c: Float = gy - angley
-                        if (Math.abs(c) >= 0.5) {
-                            gy = angley
-                        }
-                    } else {
-                        gy = angley
-                    }
-
-                    gz = anglez
-                }
-                timestamp = it.timestamp
-
-                eyeView.refreshRotate(gx,gy)
-
+                gyroScopeConverter.convert(it, this@EyeActivity::deviateAxisAngle)
             }
 
         }
@@ -72,6 +35,9 @@ class EyeActivity : AppCompatActivity() {
 
     }
 
+    fun deviateAxisAngle(gx:Float, gy:Float, gz:Float){
+        eyeView.refreshRotate(gx,gy,gz)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_eye_view)
