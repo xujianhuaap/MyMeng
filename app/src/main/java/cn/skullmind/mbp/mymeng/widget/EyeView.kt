@@ -7,6 +7,7 @@ import android.graphics.Matrix
 import android.graphics.Paint
 import android.hardware.SensorEvent
 import android.util.AttributeSet
+import android.util.Half.EPSILON
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -14,6 +15,7 @@ import cn.skullmind.mbp.mymeng.R
 import cn.skullmind.mbp.mymeng.utils.DegreeUtils
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.sqrt
 
 class EyeView : View {
     private val padding = 50
@@ -160,9 +162,8 @@ class EyeView : View {
         }
         private fun convertX(sensorEvent: SensorEvent):Float{
             if(lastTimeStamp == 0L) return gx
-
             val dT: Float = (sensorEvent.timestamp - lastTimeStamp) * NS2S
-            angle[0] += sensorEvent.values[0] * dT
+            angle[0] += sensorEvent.getValidAxis(0) * dT
             val angle = DegreeUtils.toDegree(angle[0].toDouble()).toFloat()
 
             if(gx == 0f) return angle
@@ -178,7 +179,7 @@ class EyeView : View {
             if(lastTimeStamp == 0L) return gy
 
             val dT: Float = (sensorEvent.timestamp - lastTimeStamp) * NS2S
-            angle[1] += sensorEvent.values[1] * dT
+            angle[1] += sensorEvent.getValidAxis(1) * dT
             val angle = DegreeUtils.toDegree(angle[1].toDouble()).toFloat()
 
             if(gy == 0f) return angle
@@ -186,7 +187,6 @@ class EyeView : View {
             if (abs(gy - angle) >= 0.5) {
                 return angle
             }
-
             return gy
         }
 
@@ -194,11 +194,28 @@ class EyeView : View {
             if(lastTimeStamp == 0L) return gz
 
             val dT: Float = (sensorEvent.timestamp - lastTimeStamp) * NS2S
-            angle[1] += sensorEvent.values[1] * dT
+            angle[2] += sensorEvent.getValidAxis(2) * dT
 
-            return DegreeUtils.toDegree(this.angle[1].toDouble()).toFloat()
+            return DegreeUtils.toDegree(this.angle[2].toDouble()).toFloat()
+        }
+
+        fun SensorEvent.getOmegaMagnitude():Float{
+            val axisX = values[0]
+            val axisY = values[1]
+            val axisZ = values[2]
+            return sqrt(axisX * axisX + axisY * axisY + axisZ * axisZ)
+        }
+
+        fun SensorEvent.getValidAxis(index:Int):Float{
+            if (this.getOmegaMagnitude() > EPSILON) {
+                return values[index] / getOmegaMagnitude()
+            }
+
+            return values[index]
         }
     }
+
+
 
 
 }
