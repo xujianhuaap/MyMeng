@@ -199,14 +199,15 @@ class EyeView : View {
             return DegreeUtils.toDegree(this.angle[2].toDouble()).toFloat()
         }
 
-        fun SensorEvent.getOmegaMagnitude():Float{
-            val axisX = values[0]
+        private fun SensorEvent.getOmegaMagnitude():Float{
+            val axisX = values[0]//单位 弧/秒
             val axisY = values[1]
             val axisZ = values[2]
             return sqrt(axisX * axisX + axisY * axisY + axisZ * axisZ)
         }
 
-        fun SensorEvent.getValidAxis(index:Int):Float{
+        private  fun SensorEvent.getValidAxis(index:Int):Float{
+
             if (this.getOmegaMagnitude() > EPSILON) {
                 return values[index] / getOmegaMagnitude()
             }
