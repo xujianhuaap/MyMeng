@@ -151,6 +151,7 @@ class EyeView : View {
         private var lastTimeStamp: Long = 0
         private val NS2S = 1.0f / 1000000000.0f//纳秒转化成秒
         private val angle = FloatArray(3)
+        private val max_offset_angle = Math.PI/3
 
         fun convert(sensorEvent: SensorEvent, callBack: (Float, Float, Float) -> Unit) {
 
@@ -164,6 +165,14 @@ class EyeView : View {
             if(lastTimeStamp == 0L) return gx
             val dT: Float = (sensorEvent.timestamp - lastTimeStamp) * NS2S
             angle[0] += sensorEvent.getValidAxis(0) * dT
+            angle[0] = (angle[0]%(Math.PI*2)).toFloat()
+            if(angle[0] <= - max_offset_angle){
+                angle[0] = (-max_offset_angle).toFloat()
+            }
+
+            if(angle[0] >=  max_offset_angle){
+                angle[0] = (max_offset_angle).toFloat()
+            }
             val angle = DegreeUtils.toDegree(angle[0].toDouble()).toFloat()
 
             if(gx == 0f) return angle
@@ -180,6 +189,14 @@ class EyeView : View {
 
             val dT: Float = (sensorEvent.timestamp - lastTimeStamp) * NS2S
             angle[1] += sensorEvent.getValidAxis(1) * dT
+            angle[1] = (angle[1]%(Math.PI*2)).toFloat()
+            if(angle[1] <= - max_offset_angle){
+                angle[1] = (-max_offset_angle).toFloat()
+            }
+
+            if(angle[1] >=  max_offset_angle){
+                angle[1] = (max_offset_angle).toFloat()
+            }
             val angle = DegreeUtils.toDegree(angle[1].toDouble()).toFloat()
 
             if(gy == 0f) return angle
@@ -194,9 +211,10 @@ class EyeView : View {
             if(lastTimeStamp == 0L) return gz
 
             val dT: Float = (sensorEvent.timestamp - lastTimeStamp) * NS2S
-            angle[2] += sensorEvent.getValidAxis(2) * dT
 
-            return DegreeUtils.toDegree(this.angle[2].toDouble()).toFloat()
+            angle[2] += sensorEvent.getValidAxis(2) * dT
+            angle[2] = (angle[2]%(Math.PI*2)).toFloat()
+            return 0F
         }
 
         private fun SensorEvent.getOmegaMagnitude():Float{
