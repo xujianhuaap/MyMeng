@@ -22,4 +22,5 @@
     <string name="fibonacci_name">斐波那契螺旋曲线</string>
     <string name="chrome_name">Chrome Logo</string>
     <string name="eye_name">萌萌的大眼睛</string>
+    <string name="open_gl">open gl render</string>
 </resources>
