@@ -21,8 +21,9 @@ class Triangle {
     private val vertexStride: Int = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
     private val vertexShaderCode = "attribute vec4 vPosition;" +
+            "uniform mat4 uMVPMatrix;"+
             "void main(){" +
-            "gl_Position = vPosition;" +
+            "gl_Position = uMVPMatrix*vPosition;" +
             "}"
 
     private val fragmentShaderCode = "precision mediump float;" +
@@ -48,7 +49,7 @@ class Triangle {
             GLES20.glCompileShader(shader)
         }
 
-    fun draw() {
+    fun draw(mvpMatrix:FloatArray) {
         GLES20.glUseProgram(program)
 
         positionHandle = GLES20.glGetAttribLocation(program, "vPosition").also {
@@ -63,6 +64,9 @@ class Triangle {
                     GLES20.glUniform4fv(colorHandleParameter, 1, color, 0)
                 }
 
+
+            val vPMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix")
+            GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0)
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
 
             // Disable vertex array
