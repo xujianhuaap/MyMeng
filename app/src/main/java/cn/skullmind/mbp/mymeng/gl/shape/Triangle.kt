@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 class Triangle {
-    val color = floatArrayOf(0.1f, 0.23f, 0.33f, 1.0f)
+    val color = floatArrayOf(255f, 0f, 0f, 1.0f)
     private var program: Int
     private var positionHandle: Int = 0
     private var colorHandle: Int = 0
