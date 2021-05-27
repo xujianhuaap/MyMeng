@@ -10,8 +10,10 @@ class ShaderUtil {
             val outputStream = ByteArrayOutputStream()
 
             inputStream.copyTo(outputStream,1024)
-
-            return outputStream.toByteArray().toString()?.let {
+            outputStream.flush()
+            inputStream.close()
+            outputStream.close()
+            return String(outputStream.toByteArray()).let {
                 it.replace("\\r\\n","\n")
             }
         }
