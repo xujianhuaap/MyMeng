@@ -31,12 +31,21 @@ class SixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float, reso
 
     init {
         val coords = initPoints(outRadius, innerRadius, zAxisValue)
-        val rawVertextBuffer = ByteBuffer.allocateDirect(coords.size * 4)
-        rawVertextBuffer.order(ByteOrder.nativeOrder())
-        vertexBuffer = rawVertextBuffer.asFloatBuffer()
-        vertexBuffer.put(coords)
-        vertexBuffer.position(0)
+        pointCount = coords.size / COORDINATE_SIZE_PER_VERTEX
 
+        vertexBuffer = initVertexBuffer(coords)
+        colorBuffer = initColorBuffer(pointCount)
+
+        vertexShader = initShader(GLES30.GL_VERTEX_SHADER, "vertex.sh", resource)
+        fragShader = initShader(GLES30.GL_FRAGMENT_SHADER, "frag.sh", resource)
+        program = initProgram()
+
+        aPositionHandle = GLES30.glGetAttribLocation(program, "aPosition")
+        aColorHandle = GLES30.glGetAttribLocation(program, "aColor")
+        muMVPMatrixHandle = GLES30.glGetUniformLocation(program, "uMVPMatrix")
+    }
+
+    private fun initColorBuffer(pointCount:Int):FloatBuffer {
         val colorArray = FloatArray(pointCount * 4) //¶¥µã×ÅÉ«Êý¾ÝµÄ³õÊ¼»¯
         for (i in 0 until pointCount) {
             if (i % 3 == 0) { //ÖÐÐÄµãÎª°×É«£¬RGBA 4¸öÍ¨µÀ[1,1,1,0]
@@ -51,22 +60,22 @@ class SixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float, reso
                 colorArray[i * 4 + 3] = 0F
             }
         }
-        val rawColorBuffer = ByteBuffer.allocateDirect(colorArray.size * 4)
-        rawColorBuffer.order(ByteOrder.nativeOrder())
-        colorBuffer = rawColorBuffer.asFloatBuffer()
-        colorBuffer.put(colorArray)
-        colorBuffer.position(0)
-
-        vertexShader = initShader(GLES30.GL_VERTEX_SHADER, "vertex.sh", resource)
-        fragShader = initShader(GLES30.GL_FRAGMENT_SHADER, "frag.sh", resource)
-        program = initProgram()
-
-
-        aPositionHandle = GLES30.glGetAttribLocation(program, "aPosition")
-        aColorHandle = GLES30.glGetAttribLocation(program, "aColor")
-        muMVPMatrixHandle = GLES30.glGetUniformLocation(program, "uMVPMatrix")
+        return ByteBuffer.allocateDirect(colorArray.size * 4).run {
+            order(ByteOrder.nativeOrder())
+            asFloatBuffer().apply {
+                put(colorArray)
+                position(0)
+            }
+        }
     }
 
+    private fun initVertexBuffer(coords: FloatArray):FloatBuffer = ByteBuffer.allocateDirect(coords.size * 4).run {
+        order(ByteOrder.nativeOrder())
+        asFloatBuffer().apply {
+            put(coords)
+            position(0)
+        }
+    }
 
     private fun initProgram(): Int = GLES30.glCreateProgram().let {
         GLES30.glAttachShader(it, vertexShader)
@@ -109,10 +118,10 @@ class SixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float, reso
         //½«¶¥µãÑÕÉ«Êý¾ÝËÍÈëäÖÈ¾¹ÜÏß
         GLES30.glVertexAttribPointer(
             aColorHandle,
-            COORDINATE_SIZE_PER_VERTEX,
+            COLOR_SIZE_PER_VERTEX,
             GLES30.GL_FLOAT,
             false,
-            COORDINATE_SIZE_PER_VERTEX * 4,
+            COLOR_SIZE_PER_VERTEX * 4,
             colorBuffer
         )
         //ÆôÓÃ¶¥µãÎ»ÖÃÊý¾ÝÊý×é
@@ -177,14 +186,8 @@ class SixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float, reso
             angle += tempAngle
         }
 
-        val vertexArray = FloatArray(coords.size) //¶¥µã×ø±êÊý×é
-        pointCount = coords.size / COORDINATE_SIZE_PER_VERTEX
-        for (i in 0 until pointCount) {
-            vertexArray[i * 3] = coords[i * 3]
-            vertexArray[i * 3 + 1] = coords[i * 3 + 1]
-            vertexArray[i * 3 + 2] = coords[i * 3 + 2]
-        }
-        return vertexArray
+
+        return coords.toFloatArray()
     }
 
     companion object {
