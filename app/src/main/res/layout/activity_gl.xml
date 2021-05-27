@@ -8,11 +8,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent">
-        <cn.skullmind.mbp.mymeng.gl.MyGlSurfaceView
+        <cn.skullmind.mbp.mymeng.gl.second.Gl20SurfaceView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </cn.skullmind.mbp.mymeng.gl.MyGlSurfaceView>
+        </cn.skullmind.mbp.mymeng.gl.second.Gl20SurfaceView>
 
 
     </LinearLayout>

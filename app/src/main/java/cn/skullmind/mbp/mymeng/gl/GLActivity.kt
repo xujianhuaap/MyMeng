@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
-import cn.skullmind.mbp.mymeng.R
+import cn.skullmind.mbp.mymeng.gl.second.Gl20SurfaceView
 
 fun startGLActivity(context:Context){
     val intent = Intent(context,GLActivity::class.java)
@@ -13,7 +13,7 @@ fun startGLActivity(context:Context){
 class GLActivity:FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val glView = MyGlSurfaceView(this)
+        val glView = Gl20SurfaceView(this)
         setContentView(glView)
     }
 }
