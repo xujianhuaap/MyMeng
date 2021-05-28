@@ -23,4 +23,5 @@
     <string name="chrome_name">Chrome Logo</string>
     <string name="eye_name">萌萌的大眼睛</string>
     <string name="open_gl">open gl render</string>
+    <string name="change_view">切换Surface</string>
 </resources>
