@@ -7,6 +7,7 @@ import android.util.Log
 import cn.skullmind.mbp.mymeng.gl.GLShape
 import cn.skullmind.mbp.tools.MatrixState
 import cn.skullmind.mbp.tools.ShaderUtil
+import cn.skullmind.mbp.tools.ShaderUtil.initShader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -31,7 +32,6 @@ class SixPointStar(
     private var aColorHandle = -1
     private var muMVPMatrixHandle = -1
 
-    private val modelMatrix = FloatArray(16)
 
     init {
         val coords = initPoints(outRadius, innerRadius, zAxisValue)
@@ -40,8 +40,8 @@ class SixPointStar(
         vertexBuffer = initVertexBuffer(coords)
         colorBuffer = initColorBuffer(pointCount)
 
-        vertexShader = initShader(GLES30.GL_VERTEX_SHADER, "vertex.sh", resource)
-        fragShader = initShader(GLES30.GL_FRAGMENT_SHADER, "frag.sh", resource)
+        vertexShader = initShader(GLES30.GL_VERTEX_SHADER, "vertex_six_point_star.sh", resource)
+        fragShader = initShader(GLES30.GL_FRAGMENT_SHADER, "frag_six_point_star.sh", resource)
         program = initProgram()
 
         aPositionHandle = GLES30.glGetAttribLocation(program, "aPosition")
@@ -99,17 +99,17 @@ class SixPointStar(
     }
 
     override fun draw() {
+        MatrixState.setInitModelMatrix()
+        MatrixState.translate(  0f, 0f, 1f)
+        MatrixState.rotate(0F, 0f, 0f, 1f)
+        MatrixState.rotate(0f, 0f, 1f, 0f)
+        MatrixState.rotate( 0f, 1f, 0f, 0f)
+
         GLES30.glUseProgram(program)
-        Matrix.setRotateM(modelMatrix, 0, 0f, 0f, 1f, 0f)
-        //ÉèÖÃÑØZÖáÕýÏòÎ»ÒÆ1
-        Matrix.translateM(modelMatrix, 0, 0f, 0f, 1f)
-        //ÉèÖÃÈÆyÖáÐý×ªyAngle¶È
-        Matrix.rotateM(modelMatrix, 0, 0f, 0f, 1f, 0f)
-        //ÉèÖÃÈÆxÖáÐý×ªxAngle¶È
-        Matrix.rotateM(modelMatrix, 0, 0f, 1f, 0f, 0f)
+
         GLES30.glUniformMatrix4fv(
             muMVPMatrixHandle, 1, false,
-            MatrixState.getFinalMatrix(modelMatrix), 0
+            MatrixState.getFinalMatrix(), 0
         )
         //½«¶¥µãÎ»ÖÃÊý¾ÝËÍÈëäÖÈ¾¹ÜÏß
         GLES30.glVertexAttribPointer(
@@ -138,23 +138,7 @@ class SixPointStar(
 
     }
 
-    private fun initShader(type: Int, fileName: String, resource: Resources): Int {
-        val loadShaderFromAsset = ShaderUtil.loadShaderFromAsset(resource, fileName)
-        return GLES30.glCreateShader(type).let {
-            GLES30.glShaderSource(it, loadShaderFromAsset)
-            GLES30.glCompileShader(it)
-            val compiled = IntArray(1)
-            GLES30.glGetShaderiv(it, GLES30.GL_COMPILE_STATUS, compiled, 0)
-            var result = it
-            if (compiled[0] == 0) {
-                Log.e("ES30_ERROR", "Could not compile shader $type:")
-                Log.e("ES30_ERROR", GLES30.glGetShaderInfoLog(it))
-                GLES30.glDeleteShader(it)
-                result = 0
-            }
-            result
-        }
-    }
+
 
 
     private fun initPoints(R: Float, r: Float, z: Float): FloatArray {

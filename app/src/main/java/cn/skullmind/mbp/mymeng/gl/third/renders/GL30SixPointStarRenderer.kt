@@ -1,4 +1,4 @@
-package cn.skullmind.mbp.mymeng.gl.third
+package cn.skullmind.mbp.mymeng.gl.third.renders
 
 import android.content.res.Resources
 import android.opengl.GLES30
@@ -9,7 +9,7 @@ import cn.skullmind.mbp.tools.MatrixState
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class GL30Renderer: GLSurfaceView.Renderer {
+class GL30SixPointStarRenderer: GLSurfaceView.Renderer {
     lateinit var shape: GLShape
     lateinit var resources:Resources
 
@@ -17,20 +17,20 @@ class GL30Renderer: GLSurfaceView.Renderer {
         GLES30.glClearColor(0.5f, 0.5f, 0.5f, 1.0f)
         shape = Shape.getSixPointStar(0.3f, 0.1f, -0.3F, resources)
         GLES30.glEnable(GLES30.GL_DEPTH_TEST)
+        GLES30.glEnable(GLES30.GL_CULL_FACE)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        val viewWidth = width / 2
-        val viewHeight = height / 2
-        val xStart = (width - viewWidth)/2
-        val yStart = (height - viewHeight)/2
-        GLES30.glViewport(xStart, yStart, viewWidth, viewHeight)
+        val xStart = (width - width)/2
+        val yStart = (height - height)/2
+        GLES30.glViewport(xStart, yStart, width, height)
         val ratio = width.toFloat() / height
         MatrixState.setProjectOrtho(-ratio, ratio, -1f, 1f, 2f, 3f)
         MatrixState.setCamera(
             0f, 0f, 3f, 0f, 0f, 0f,
             0f, 1.0f, 0.0f
         )
+        MatrixState.setInitModelMatrix()
     }
 
     override fun onDrawFrame(gl: GL10?) {

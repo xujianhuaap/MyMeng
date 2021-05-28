@@ -16,7 +16,7 @@ fun startGLActivity(context: Context) {
 }
 
 class GLActivity : FragmentActivity() {
-    private lateinit var container:ViewGroup
+    private lateinit var container: ViewGroup
     private var isOOD = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +26,8 @@ class GLActivity : FragmentActivity() {
             addView(Gl20SurfaceView(this@GLActivity))
         }
         findViewById<View>(R.id.tv_switch_view).setOnClickListener {
-            getGL20SurfaceView().visibility = if(isOOD)View.VISIBLE else View.GONE
-            getGL30SurfaceView().visibility = if(isOOD)View.GONE else View.VISIBLE
+            getGL20SurfaceView().visibility = if (isOOD) View.VISIBLE else View.GONE
+            getGL30SurfaceView().visibility = if (isOOD) View.GONE else View.VISIBLE
             isOOD = !isOOD
         }
     }
