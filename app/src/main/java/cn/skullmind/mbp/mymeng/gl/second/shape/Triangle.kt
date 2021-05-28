@@ -1,6 +1,7 @@
 package cn.skullmind.mbp.mymeng.gl.second.shape
 
 import android.opengl.GLES20
+import android.opengl.Matrix
 import cn.skullmind.mbp.tools.MatrixState
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -67,8 +68,16 @@ class Triangle {
 
 
             val vPMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix")
-            val modelArray = FloatArray(16)
-            GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, MatrixState.getFinalMatrix(modelArray), 0)
+            val modelMatrix = FloatArray(16)
+            Matrix.setRotateM(modelMatrix, 0, 0f, 0f, 1f, 0f)
+            //ÉèÖÃÑØZÖáÕýÏòÎ»ÒÆ1
+            Matrix.translateM(modelMatrix, 0, 0f, 0f, 1f)
+            //ÉèÖÃÈÆyÖáÐý×ªyAngle¶È
+            Matrix.rotateM(modelMatrix, 0, 0f, 0f, 1f, 0f)
+            //ÉèÖÃÈÆxÖáÐý×ªxAngle¶È
+            Matrix.rotateM(modelMatrix, 0, 0f, 1f, 0f, 0f)
+            GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, MatrixState.getFinalMatrix(modelMatrix), 0)
+
             GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
 
             // Disable vertex array

@@ -2,7 +2,7 @@ package cn.skullmind.mbp.mymeng.gl.second
 
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
-import android.opengl.Matrix
+import cn.skullmind.mbp.mymeng.gl.Shape
 import cn.skullmind.mbp.mymeng.gl.second.shape.Triangle
 import cn.skullmind.mbp.tools.MatrixState
 import javax.microedition.khronos.egl.EGLConfig
@@ -14,7 +14,7 @@ class GL20Renderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0F, 0F, 0F, 1F)
-        triangle = Triangle()
+        triangle = Shape.getTriangle()
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -22,10 +22,10 @@ class GL20Renderer : GLSurfaceView.Renderer {
         val ratio: Float = width.toFloat() / height.toFloat()
         //正交转换
         MatrixState.setProjectOrtho(-ratio, ratio, -1f, 1f, 1f, 10f)
-        MatrixState.setCamera(0F, 0f, 0F, -3F,
-            0F, 0F, 0F, 0F, 1F)
-        //透视转换
-        MatrixState.setProjectfrustumM(-ratio, ratio, -1F, 1F, 3F, 7F)
+        MatrixState.setCamera(
+            0f, 0f, 3f, 0f, 0f, 0f,
+            0f, 1.0f, 0.0f
+        )
     }
 
     override fun onDrawFrame(gl: GL10?) {

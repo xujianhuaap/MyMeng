@@ -1,6 +1,7 @@
 package cn.skullmind.mbp.mymeng.gl
 
 import android.content.res.Resources
+import cn.skullmind.mbp.mymeng.gl.second.shape.Triangle
 import cn.skullmind.mbp.mymeng.gl.third.shape.SixPointStar
 
 interface GLShape{
@@ -11,4 +12,6 @@ object Shape{
     fun getSixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float,
                         resource: Resources):SixPointStar =
         SixPointStar(outRadius, innerRadius,zAxisValue,resource)
+
+    fun getTriangle():Triangle = Triangle()
 }
