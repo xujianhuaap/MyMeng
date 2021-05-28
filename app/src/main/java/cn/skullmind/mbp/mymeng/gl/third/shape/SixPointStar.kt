@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.opengl.GLES30
 import android.opengl.Matrix
 import android.util.Log
+import cn.skullmind.mbp.mymeng.gl.GLShape
 import cn.skullmind.mbp.tools.MatrixState
 import cn.skullmind.mbp.tools.ShaderUtil
 import java.nio.ByteBuffer
@@ -13,7 +14,10 @@ import java.util.*
 import kotlin.math.cos
 import kotlin.math.sin
 
-class SixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float, resource: Resources) {
+class SixPointStar(
+    outRadius: Float, innerRadius: Float, zAxisValue: Float,
+    resource: Resources
+) : GLShape {
 
     private var pointCount = 0
 
@@ -45,7 +49,7 @@ class SixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float, reso
         muMVPMatrixHandle = GLES30.glGetUniformLocation(program, "uMVPMatrix")
     }
 
-    private fun initColorBuffer(pointCount:Int):FloatBuffer {
+    private fun initColorBuffer(pointCount: Int): FloatBuffer {
         val colorArray = FloatArray(pointCount * 4) //¶¥µã×ÅÉ«Êý¾ÝµÄ³õÊ¼»¯
         for (i in 0 until pointCount) {
             if (i % 3 == 0) { //ÖÐÐÄµãÎª°×É«£¬RGBA 4¸öÍ¨µÀ[1,1,1,0]
@@ -69,13 +73,14 @@ class SixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float, reso
         }
     }
 
-    private fun initVertexBuffer(coords: FloatArray):FloatBuffer = ByteBuffer.allocateDirect(coords.size * 4).run {
-        order(ByteOrder.nativeOrder())
-        asFloatBuffer().apply {
-            put(coords)
-            position(0)
+    private fun initVertexBuffer(coords: FloatArray): FloatBuffer =
+        ByteBuffer.allocateDirect(coords.size * 4).run {
+            order(ByteOrder.nativeOrder())
+            asFloatBuffer().apply {
+                put(coords)
+                position(0)
+            }
         }
-    }
 
     private fun initProgram(): Int = GLES30.glCreateProgram().let {
         GLES30.glAttachShader(it, vertexShader)
@@ -93,7 +98,7 @@ class SixPointStar(outRadius: Float, innerRadius: Float, zAxisValue: Float, reso
         result
     }
 
-    fun draw() {
+    override fun draw() {
         GLES30.glUseProgram(program)
         Matrix.setRotateM(modelMatrix, 0, 0f, 0f, 1f, 0f)
         //ÉèÖÃÑØZÖáÕýÏòÎ»ÒÆ1
