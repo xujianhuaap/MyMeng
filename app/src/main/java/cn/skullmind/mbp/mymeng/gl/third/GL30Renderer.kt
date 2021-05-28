@@ -15,14 +15,18 @@ class GL30Renderer: GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES30.glClearColor(0.5f, 0.5f, 0.5f, 1.0f)
-        shape = Shape.getSixPointStar(0.5f, 0.2f, -0.3F, resources)
+        shape = Shape.getSixPointStar(0.3f, 0.1f, -0.3F, resources)
         GLES30.glEnable(GLES30.GL_DEPTH_TEST)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        GLES30.glViewport(0, 0, width, height)
+        val viewWidth = width / 2
+        val viewHeight = height / 2
+        val xStart = (width - viewWidth)/2
+        val yStart = (height - viewHeight)/2
+        GLES30.glViewport(xStart, yStart, viewWidth, viewHeight)
         val ratio = width.toFloat() / height
-        MatrixState.setProjectOrtho(-ratio, ratio, -1f, 1f, 1f, 10f)
+        MatrixState.setProjectOrtho(-ratio, ratio, -1f, 1f, 2f, 3f)
         MatrixState.setCamera(
             0f, 0f, 3f, 0f, 0f, 0f,
             0f, 1.0f, 0.0f
@@ -32,6 +36,6 @@ class GL30Renderer: GLSurfaceView.Renderer {
     override fun onDrawFrame(gl: GL10?) {
 
         GLES30.glClear(GLES30.GL_DEPTH_BUFFER_BIT or GLES30.GL_COLOR_BUFFER_BIT)
-        shape!!.draw()
+        shape.draw()
     }
 }
