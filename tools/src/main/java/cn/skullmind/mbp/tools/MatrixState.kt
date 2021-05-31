@@ -12,16 +12,16 @@ object MatrixState {
 
     fun setInitModelMatrix() {
         mModelMatrix = FloatArray(16)
+        //设置Matrix 注意Matrix.setRotateM()与Matrix.rotateM()的区别
         Matrix.setRotateM(mModelMatrix, 0, 0f, 1f, 0f, 0f)
     }
 
-
-    fun translate(x: Float, y: Float, z: Float) //������xyz���ƶ�
+    fun translate(x: Float, y: Float, z: Float)
     {
         Matrix.translateM(mModelMatrix, 0, x, y, z)
     }
 
-    fun rotate(angle: Float, x: Float, y: Float, z: Float) //������xyz���ƶ�
+    fun rotate(angle: Float, x: Float, y: Float, z: Float)
     {
         Matrix.rotateM(mModelMatrix, 0, angle, x, y, z)
     }

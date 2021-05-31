@@ -1,21 +1,46 @@
 package cn.skullmind.mbp.mymeng.gl.third
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.opengl.GLSurfaceView
+import android.view.MotionEvent
 import cn.skullmind.mbp.mymeng.gl.third.renders.GL30BallRenderer
-import cn.skullmind.mbp.mymeng.gl.third.renders.GL30SixPointStarRenderer
 
 class Gl30SurfaceView(context: Context?) : GLSurfaceView(context) {
-    private val render: GL30SixPointStarRenderer
+    private val render: GL30BallRenderer
+    private var touchX = 0f
+    private var touchY = 0f
 
     init {
         setEGLContextClientVersion(3)
-        render = GL30SixPointStarRenderer()
+        render = GL30BallRenderer()
         render.resources = resources
         setRenderer(render)
         renderMode = RENDERMODE_CONTINUOUSLY
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        val handled = super.onTouchEvent(event)
+
+        event?.also {
+            if (MotionEvent.ACTION_MOVE.equals(it.action)) {
+                val xRangle = (it.x - touchX) * SCALE_FACTOR
+                val yRangle = (it.y - touchY) * SCALE_FACTOR
+                render.refreshBallAngles(xRangle, yRangle, 0f)
+            }
+
+            touchX = it.x
+            touchY = it.y
+        }
+        return true
+
+    }
+
+
+    companion object {
+        const val SCALE_FACTOR = 0.8f
+    }
 }
 
 

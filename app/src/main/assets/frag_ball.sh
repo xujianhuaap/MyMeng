@@ -13,10 +13,10 @@ void main(){
    int k = int((aPosition.z + uR)/span);
    int whichColor = int(mod(float(i+j+k),2.0));
    if(whichColor == 1) {
-   		color = vec3(0.678,0.231,0f);
+   		color = vec3(0f,0.25f,0f);
    }
    else {
-   		color = vec3(1.0,0f,1.0);
+   		color = vec3(0.5f,0.3f,0f);
    }
    fragColor=vec4(color,1.0f);
 }

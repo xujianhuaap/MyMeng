@@ -52,12 +52,12 @@ class SixPointStar(
     private fun initColorBuffer(pointCount: Int): FloatBuffer {
         val colorArray = FloatArray(pointCount * 4) //¶¥µã×ÅÉ«Êý¾ÝµÄ³õÊ¼»¯
         for (i in 0 until pointCount) {
-            if (i % 3 == 0) { //ÖÐÐÄµãÎª°×É«£¬RGBA 4¸öÍ¨µÀ[1,1,1,0]
+            if (i % 3 == 0) {
                 colorArray[i * 4] = 1F
                 colorArray[i * 4 + 1] = 1F
                 colorArray[i * 4 + 2] = 1F
                 colorArray[i * 4 + 3] = 0F
-            } else { //±ßÉÏµÄµãÎªµ­À¶É«£¬RGBA 4¸öÍ¨µÀ[0.45,0.75,0.75,0]
+            } else {
                 colorArray[i * 4] = 0.45f
                 colorArray[i * 4 + 1] = 0.75f
                 colorArray[i * 4 + 2] = 0.75f
@@ -101,8 +101,9 @@ class SixPointStar(
     override fun draw() {
         MatrixState.setInitModelMatrix()
         MatrixState.translate(  0f, 0f, 1f)
-        MatrixState.rotate(0F, 0f, 0f, 1f)
-        MatrixState.rotate(0f, 0f, 1f, 0f)
+//        MatrixState.rotate(0f, 1f, 0f, 0f)
+//        MatrixState.rotate(0F, 0f, 0f, 1f)
+//        MatrixState.rotate(0f, 0f, 1f, 0f)
         MatrixState.rotate( 0f, 1f, 0f, 0f)
 
         GLES30.glUseProgram(program)
@@ -111,7 +112,6 @@ class SixPointStar(
             muMVPMatrixHandle, 1, false,
             MatrixState.getFinalMatrix(), 0
         )
-        //½«¶¥µãÎ»ÖÃÊý¾ÝËÍÈëäÖÈ¾¹ÜÏß
         GLES30.glVertexAttribPointer(
             aPositionHandle,
             COORDINATE_SIZE_PER_VERTEX,
@@ -120,7 +120,7 @@ class SixPointStar(
             COORDINATE_SIZE_PER_VERTEX * 4,
             vertexBuffer
         )
-        //½«¶¥µãÑÕÉ«Êý¾ÝËÍÈëäÖÈ¾¹ÜÏß
+
         GLES30.glVertexAttribPointer(
             aColorHandle,
             COLOR_SIZE_PER_VERTEX,
@@ -129,11 +129,8 @@ class SixPointStar(
             COLOR_SIZE_PER_VERTEX * 4,
             colorBuffer
         )
-        //ÆôÓÃ¶¥µãÎ»ÖÃÊý¾ÝÊý×é
         GLES30.glEnableVertexAttribArray(aPositionHandle)
-        //ÆôÓÃ¶¥µãÑÕÉ«Êý¾ÝÊý×é
         GLES30.glEnableVertexAttribArray(aColorHandle)
-        //»æÖÆÁù½ÇÐÇ
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, pointCount)
 
     }

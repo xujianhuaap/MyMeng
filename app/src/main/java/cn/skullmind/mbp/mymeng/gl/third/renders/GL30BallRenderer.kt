@@ -10,7 +10,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 class GL30BallRenderer: GLSurfaceView.Renderer {
-    lateinit var shape: GLShape
+    private lateinit var shape: Ball
     lateinit var resources:Resources
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
@@ -34,4 +34,10 @@ class GL30BallRenderer: GLSurfaceView.Renderer {
         GLES30.glClear(GLES30.GL_DEPTH_BUFFER_BIT or GLES30.GL_COLOR_BUFFER_BIT)
         shape.draw()
     }
+
+    fun refreshBallAngles(angleX:Float, angleY:Float, angleZ:Float){
+        shape.refreshAngles(angleX,angleY,angleZ)
+    }
+
+
 }

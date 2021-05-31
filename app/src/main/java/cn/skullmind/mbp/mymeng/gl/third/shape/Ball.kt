@@ -2,35 +2,38 @@ package cn.skullmind.mbp.mymeng.gl.third.shape
 
 import android.content.res.Resources
 import android.opengl.GLES30
-import android.opengl.Matrix
 import cn.skullmind.mbp.mymeng.gl.GLShape
 import cn.skullmind.mbp.tools.MatrixState
 import cn.skullmind.mbp.tools.ShaderUtil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import javax.microedition.khronos.opengles.GL
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Ball(resource: Resources):GLShape {
-    private val pointCoords:FloatArray
-    private val pointSize:Int
+class Ball(resource: Resources) : GLShape {
+    private val pointCoords: FloatArray
+    private val pointSize: Int
 
-    private val vertexShader:Int
-    private val fragShader:Int
-    private val program:Int
+    private val vertexShader: Int
+    private val fragShader: Int
+    private val program: Int
 
-    private val positionHandle:Int
-    private val uMVPMatrixHandle:Int
-    private val uRHandle:Int
+    private val positionHandle: Int
+    private val uMVPMatrixHandle: Int
+    private val uRHandle: Int
 
-    private val vertexBuffer:FloatBuffer
+    private val vertexBuffer: FloatBuffer
+
+    private var angleX = 0f
+    private var angleY = 0f
+    private var angleZ = 0f
 
     val r = 0.8f
+
     init {
         pointCoords = initPoints()
-        pointSize = pointCoords.size/COORD_SIZE_PER_VERTEX
+        pointSize = pointCoords.size / COORD_SIZE_PER_VERTEX
 
         vertexBuffer = ByteBuffer.allocateDirect(pointCoords.size * 4).run {
             order(ByteOrder.nativeOrder())
@@ -49,14 +52,14 @@ class Ball(resource: Resources):GLShape {
         uRHandle = GLES30.glGetUniformLocation(program, "uR")
     }
 
-    private fun initProgram():Int = GLES30.glCreateProgram().also {
+    private fun initProgram(): Int = GLES30.glCreateProgram().also {
         GLES30.glAttachShader(it, vertexShader)
         GLES30.glAttachShader(it, fragShader)
         GLES30.glLinkProgram(it)
     }
 
 
-    private fun initPoints():FloatArray{
+    private fun initPoints(): FloatArray {
         val pointCoords = ArrayList<Float>()
         val angleSpan = 10 // ������е�λ�зֵĽǶ�
         var vAngle = -90
@@ -67,55 +70,51 @@ class Ball(resource: Resources):GLShape {
                         * cos(Math.toRadians(vAngle.toDouble())) * cos(
                     Math
                         .toRadians(hAngle.toDouble())
-                )) .toFloat()
+                )).toFloat()
                 val y0 = (r * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle.toDouble())) * Math.sin(
+                        * cos(Math.toRadians(vAngle.toDouble())) * sin(
                     Math
                         .toRadians(hAngle.toDouble())
-                )) .toFloat()
+                )).toFloat()
                 val z0 = (r * UNIT_SIZE * sin(
                     Math
                         .toRadians(vAngle.toDouble())
-                )) .toFloat()
+                )).toFloat()
                 val x1 = (r * UNIT_SIZE
                         * cos(Math.toRadians(vAngle.toDouble())) * cos(
                     Math
                         .toRadians((hAngle + angleSpan).toDouble())
-                )) .toFloat()
+                )).toFloat()
                 val y1 = (r * UNIT_SIZE
                         * cos(Math.toRadians(vAngle.toDouble())) * sin(
                     Math
                         .toRadians((hAngle + angleSpan).toDouble())
-                )) .toFloat()
+                )).toFloat()
                 val z1 = (r * UNIT_SIZE * sin(
                     Math
                         .toRadians(vAngle.toDouble())
-                )) .toFloat()
+                )).toFloat()
                 val x2 = (r * UNIT_SIZE
-                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * Math
-                    .cos(Math.toRadians((hAngle + angleSpan).toDouble()))) .toFloat()
+                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * cos(Math.toRadians((hAngle + angleSpan).toDouble()))).toFloat()
                 val y2 = (r * UNIT_SIZE
-                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * Math
-                    .sin(Math.toRadians((hAngle + angleSpan).toDouble()))) .toFloat()
+                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * sin(Math.toRadians((hAngle + angleSpan).toDouble()))).toFloat()
                 val z2 = (r * UNIT_SIZE * sin(
                     Math
                         .toRadians((vAngle + angleSpan).toDouble())
-                )) .toFloat()
+                )).toFloat()
                 val x3 = (r * UNIT_SIZE
-                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * Math
-                    .cos(Math.toRadians(hAngle.toDouble()))) .toFloat()
+                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * cos(Math.toRadians(hAngle.toDouble()))).toFloat()
                 val y3 = (r * UNIT_SIZE
                         * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * sin(
                     Math.toRadians(
                         hAngle.toDouble()
                     )
-                )) .toFloat()
+                )).toFloat()
                 val z3 = (r * UNIT_SIZE * sin(
                     Math
                         .toRadians((vAngle + angleSpan).toDouble())
-                )) .toFloat()
+                )).toFloat()
 
-                // �����������XYZ��������Ŷ��������ArrayList
                 pointCoords.add(x1)
                 pointCoords.add(y1)
                 pointCoords.add(z1)
@@ -145,20 +144,36 @@ class Ball(resource: Resources):GLShape {
     override fun draw() {
         GLES30.glUseProgram(program)
 
-        MatrixState.rotate(0F, 1f, 0f, 0f) //��X��ת��
-        MatrixState.rotate(0F, 0f, 1f, 0f) //��Y��ת��
-        MatrixState.rotate(0F, 0f, 0f, 1f) //��Z��ת��
-        GLES30.glUniformMatrix4fv(uMVPMatrixHandle,1,false,
-            MatrixState.getFinalMatrix(),0)
-        GLES30.glVertexAttribPointer(positionHandle, COORD_SIZE_PER_VERTEX,GLES30.GL_FLOAT,
-            false, COORD_SIZE_PER_VERTEX*4,vertexBuffer)
-        GLES30.glUniform1f(uRHandle,r* UNIT_SIZE)
+        MatrixState.rotate(angleX, 1f, 0f, 0f)
+        MatrixState.rotate(0f, 0f, 1f, 0f)
+        MatrixState.rotate(angleZ, 0f, 0f, 1f)
+        GLES30.glUniformMatrix4fv(
+            uMVPMatrixHandle, 1, false,
+            MatrixState.getFinalMatrix(), 0
+        )
+        GLES30.glVertexAttribPointer(
+            positionHandle, COORD_SIZE_PER_VERTEX, GLES30.GL_FLOAT,
+            false, COORD_SIZE_PER_VERTEX * 4, vertexBuffer
+        )
+        GLES30.glUniform1f(uRHandle, r * UNIT_SIZE)
         GLES30.glEnableVertexAttribArray(positionHandle)
-        GLES30.glDrawArrays(GLES30.GL_TRIANGLES,0,pointSize)
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, pointSize)
     }
-    
-    companion object{
+
+    fun refreshAngles(angleX:Float, angleY:Float, angleZ:Float){
+        this.angleX += angleX
+        this.angleX = this.angleX.coerceAtMost(MAX_ANGLE)
+        this.angleX = this.angleX.coerceAtLeast(-MAX_ANGLE)
+        this.angleY += angleY
+        this.angleY = this.angleY.coerceAtMost(MAX_ANGLE)
+        this.angleY = this.angleY.coerceAtLeast(-MAX_ANGLE)
+        this.angleZ += angleZ
+    }
+
+    companion object {
         const val UNIT_SIZE = 1
         const val COORD_SIZE_PER_VERTEX = 3
+        const val MAX_ANGLE = 3.5f
+
     }
 }
