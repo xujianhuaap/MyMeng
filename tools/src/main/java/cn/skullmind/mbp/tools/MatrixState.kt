@@ -1,6 +1,9 @@
 package cn.skullmind.mbp.tools
 
 import android.opengl.Matrix
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.FloatBuffer
 
 object MatrixState {
     private val mProjMatrix = FloatArray(16)
@@ -10,6 +13,24 @@ object MatrixState {
     private lateinit var mMVPMatrix: FloatArray //最终结果
     private lateinit var mModelMatrix: FloatArray
 
+
+    private val lightPosition = FloatArray(3)
+    private val rawLightBuffer = ByteBuffer.allocateDirect(lightPosition.size *4)
+    lateinit var lightBuffer:FloatBuffer
+
+    fun getCurrentModelMatrix() = mMVPMatrix
+    fun setLightPosition(x:Float,y: Float,z: Float){
+        lightPosition[0] = x
+        lightPosition[1] = y
+        lightPosition[2] = z
+        lightBuffer = rawLightBuffer.run {
+            order(ByteOrder.nativeOrder())
+            asFloatBuffer().apply {
+                put(lightPosition)
+                position(0)
+            }
+        }
+    }
     fun setInitModelMatrix() {
         mModelMatrix = FloatArray(16)
         //设置Matrix 注意Matrix.setRotateM()与Matrix.rotateM()的区别

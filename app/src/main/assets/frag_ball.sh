@@ -1,9 +1,9 @@
 #version 300 es
 precision mediump float;
 uniform float uR;
-in vec2 mcLongLat;
 in vec3 aPosition;
 in vec4 vAmbientLight;
+in vec4 vDiffUse;
 out vec4 fragColor;
 void main(){
    vec3 color;
@@ -19,5 +19,6 @@ void main(){
    else {
    		color = vec3(1.0,1.0,1.0);
    }
-   fragColor=vec4(color,0f)*vAmbientLight;
+   vec4 finalColor = vec4(color,0f);
+   fragColor= finalColor*vAmbientLight + finalColor*vDiffUse;
 }

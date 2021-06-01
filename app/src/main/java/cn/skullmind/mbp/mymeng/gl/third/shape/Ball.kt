@@ -20,10 +20,14 @@ class Ball(resource: Resources) : GLShape {
     private val program: Int
 
     private val positionHandle: Int
+    private val uLightPositionHandle: Int
     private val uMVPMatrixHandle: Int
+    private val uMMatrixHandle: Int
     private val uRHandle: Int
+    private val aNormalHandle:Int
 
     private val vertexBuffer: FloatBuffer
+    private val normalBuffer: FloatBuffer
 
     private var angleX = 0f
     private var angleY = 0f
@@ -43,12 +47,23 @@ class Ball(resource: Resources) : GLShape {
             }
         }
 
+        normalBuffer = ByteBuffer.allocateDirect(pointCoords.size * 4).run {
+            order(ByteOrder.nativeOrder())
+            asFloatBuffer().apply {
+                put(pointCoords)
+                position(0)
+            }
+        }
+
 
         vertexShader = ShaderUtil.initShader(GLES30.GL_VERTEX_SHADER, "vertex_ball.sh", resource)
         fragShader = ShaderUtil.initShader(GLES30.GL_FRAGMENT_SHADER, "frag_ball.sh", resource)
         program = initProgram()
         positionHandle = GLES30.glGetAttribLocation(program, "vPosition")
+        aNormalHandle = GLES30.glGetAttribLocation(program, "aNormal")
+        uLightPositionHandle = GLES30.glGetUniformLocation(program, "uLightPosition")
         uMVPMatrixHandle = GLES30.glGetUniformLocation(program, "uMVPMatrix")
+        uMMatrixHandle = GLES30.glGetUniformLocation(program, "uMMatrix")
         uRHandle = GLES30.glGetUniformLocation(program, "uR")
     }
 
@@ -95,15 +110,27 @@ class Ball(resource: Resources) : GLShape {
                         .toRadians(vAngle.toDouble())
                 )).toFloat()
                 val x2 = (r * UNIT_SIZE
-                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * cos(Math.toRadians((hAngle + angleSpan).toDouble()))).toFloat()
+                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * cos(
+                    Math.toRadians(
+                        (hAngle + angleSpan).toDouble()
+                    )
+                )).toFloat()
                 val y2 = (r * UNIT_SIZE
-                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * sin(Math.toRadians((hAngle + angleSpan).toDouble()))).toFloat()
+                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * sin(
+                    Math.toRadians(
+                        (hAngle + angleSpan).toDouble()
+                    )
+                )).toFloat()
                 val z2 = (r * UNIT_SIZE * sin(
                     Math
                         .toRadians((vAngle + angleSpan).toDouble())
                 )).toFloat()
                 val x3 = (r * UNIT_SIZE
-                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * cos(Math.toRadians(hAngle.toDouble()))).toFloat()
+                        * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * cos(
+                    Math.toRadians(
+                        hAngle.toDouble()
+                    )
+                )).toFloat()
                 val y3 = (r * UNIT_SIZE
                         * cos(Math.toRadians((vAngle + angleSpan).toDouble())) * sin(
                     Math.toRadians(
@@ -143,7 +170,6 @@ class Ball(resource: Resources) : GLShape {
 
     override fun draw() {
         GLES30.glUseProgram(program)
-
         MatrixState.rotate(angleX, 1f, 0f, 0f)
         MatrixState.rotate(0f, 0f, 1f, 0f)
         MatrixState.rotate(angleZ, 0f, 0f, 1f)
@@ -151,16 +177,33 @@ class Ball(resource: Resources) : GLShape {
             uMVPMatrixHandle, 1, false,
             MatrixState.getFinalMatrix(), 0
         )
+
+        GLES30.glUniformMatrix4fv(
+            uMMatrixHandle, 1, false,
+            MatrixState.getCurrentModelMatrix(), 0
+        )
+
+        GLES30.glUniform3fv(
+            uLightPositionHandle,
+            1, MatrixState.lightBuffer
+        )
+
+        GLES30.glUniform1f(uRHandle, r * UNIT_SIZE)
+
+        GLES30.glVertexAttribPointer(
+            aNormalHandle, COORD_SIZE_PER_VERTEX,
+            GLES30.GL_FLOAT, false, COORD_SIZE_PER_VERTEX * 4,
+            normalBuffer)
         GLES30.glVertexAttribPointer(
             positionHandle, COORD_SIZE_PER_VERTEX, GLES30.GL_FLOAT,
             false, COORD_SIZE_PER_VERTEX * 4, vertexBuffer
         )
-        GLES30.glUniform1f(uRHandle, r * UNIT_SIZE)
         GLES30.glEnableVertexAttribArray(positionHandle)
+        GLES30.glEnableVertexAttribArray(aNormalHandle)
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, pointSize)
     }
 
-    fun refreshAngles(angleX:Float, angleY:Float, angleZ:Float){
+    fun refreshAngles(angleX: Float, angleY: Float, angleZ: Float){
         this.angleX += angleX
         this.angleX = this.angleX.coerceAtMost(MAX_ANGLE)
         this.angleX = this.angleX.coerceAtLeast(-MAX_ANGLE)

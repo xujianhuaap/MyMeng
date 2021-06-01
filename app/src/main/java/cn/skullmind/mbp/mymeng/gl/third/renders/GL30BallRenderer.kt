@@ -3,7 +3,6 @@ package cn.skullmind.mbp.mymeng.gl.third.renders
 import android.content.res.Resources
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
-import cn.skullmind.mbp.mymeng.gl.GLShape
 import cn.skullmind.mbp.mymeng.gl.third.shape.Ball
 import cn.skullmind.mbp.tools.MatrixState
 import javax.microedition.khronos.egl.EGLConfig
@@ -21,8 +20,11 @@ class GL30BallRenderer: GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-
-        GLES30.glViewport(0, 0, width, height)
+        val viewWidth = width * 0.6
+        val viewHeight = height * 0.6
+        val xStart = (width - viewWidth) /2
+        val yStart = (height - viewHeight)/2
+        GLES30.glViewport(xStart.toInt(), yStart.toInt(), viewWidth.toInt(), viewHeight.toInt())
         val ratio = width.toFloat() / height
         MatrixState.setProjectfrustumM(-ratio, ratio, -1F, 1F, 20F, 100F)
         MatrixState.setCamera(0F, 0F, 30F, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
@@ -32,11 +34,12 @@ class GL30BallRenderer: GLSurfaceView.Renderer {
     override fun onDrawFrame(gl: GL10?) {
 
         GLES30.glClear(GLES30.GL_DEPTH_BUFFER_BIT or GLES30.GL_COLOR_BUFFER_BIT)
+        MatrixState.setLightPosition(50f, 70f, 50f)
         shape.draw()
     }
 
-    fun refreshBallAngles(angleX:Float, angleY:Float, angleZ:Float){
-        shape.refreshAngles(angleX,angleY,angleZ)
+    fun refreshBallAngles(angleX: Float, angleY: Float, angleZ: Float){
+        shape.refreshAngles(angleX, angleY, angleZ)
     }
 
 
