@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream
 
 object ShaderUtil {
     fun initShader(type: Int, fileName: String, resource: Resources): Int {
-        val loadShaderFromAsset = ShaderUtil.loadShaderFromAsset(resource, fileName)
+        val loadShaderFromAsset = loadShaderFromAsset(resource, fileName)
         return GLES30.glCreateShader(type).let {
             GLES30.glShaderSource(it, loadShaderFromAsset)
             GLES30.glCompileShader(it)

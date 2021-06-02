@@ -5,16 +5,16 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.view.MotionEvent
 import cn.skullmind.mbp.mymeng.gl.third.renders.GL30BallRenderer
+import cn.skullmind.mbp.mymeng.gl.third.renders.GL30WallRender
 
 class Gl30SurfaceView(context: Context?) : GLSurfaceView(context) {
-    private val render: GL30BallRenderer
+    private val render: GL30WallRender
     private var touchX = 0f
     private var touchY = 0f
 
     init {
         setEGLContextClientVersion(3)
-        render = GL30BallRenderer()
-        render.resources = resources
+        render = GL30WallRender(resources)
         setRenderer(render)
         renderMode = RENDERMODE_CONTINUOUSLY
     }
@@ -27,7 +27,7 @@ class Gl30SurfaceView(context: Context?) : GLSurfaceView(context) {
             if (MotionEvent.ACTION_MOVE.equals(it.action)) {
                 val xRangle = (it.x - touchX) * SCALE_FACTOR
                 val yRangle = (it.y - touchY) * SCALE_FACTOR
-                render.refreshBallAngles(xRangle, yRangle, 0f)
+//                render.refreshBallAngles(xRangle, yRangle, 0f)
             }
 
             touchX = it.x
