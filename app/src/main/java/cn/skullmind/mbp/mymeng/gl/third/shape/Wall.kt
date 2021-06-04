@@ -10,19 +10,19 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-class Wall (val resources: Resources, val textureId: Int) : GLShape {
-    private val pointCoords:FloatArray
-    private var pointCount:Int = 0
+class Wall(val resources: Resources, val textureId: Int) : GLShape {
+    private val pointCoords: FloatArray
+    private var pointCount: Int = 0
 
-    private var pointBuffer:FloatBuffer
-    private var textureBuffer:FloatBuffer
+    private var pointBuffer: FloatBuffer
+    private var textureBuffer: FloatBuffer
 
     private var vertexShader = 0
     private var fragShader = 0
     private var program: Int = 0
-    private var uMVPMatrixHandle:Int = 0
+    private var uMVPMatrixHandle: Int = 0
     private var aPositionHandle: Int = 0
-    private var aTextureCoorHandle:Int = 0
+    private var aTextureCoorHandle: Int = 0
 
     init {
         pointCoords = initPoints()
@@ -37,9 +37,14 @@ class Wall (val resources: Resources, val textureId: Int) : GLShape {
         }
 
         val textureCoor = floatArrayOf(
-            0.5f, 0f,
-            0f, 1f,
-            1f, 0f
+            0f, 0f,
+            3f, 0f,
+            3f, 3f,
+
+
+            0f, 0f,
+            0f, 3f,
+            3f, 3f
         )
         textureBuffer = ByteBuffer.allocateDirect(textureCoor.size * 4).run {
             order(ByteOrder.nativeOrder())
@@ -57,16 +62,20 @@ class Wall (val resources: Resources, val textureId: Int) : GLShape {
         aTextureCoorHandle = GLES30.glGetAttribLocation(program, "aTexture")
     }
 
-    private fun initPoints():FloatArray{
+    private fun initPoints(): FloatArray {
         val s = floatArrayOf(
-            0 * UNIT_SIZE, 11 * UNIT_SIZE, 0f,
-            -11 * UNIT_SIZE, -11 * UNIT_SIZE, 0f,
-            11 * UNIT_SIZE, -11 * UNIT_SIZE, 0f
+            -1f * UNIT_SIZE, 1 * UNIT_SIZE, 0f,
+            1 * UNIT_SIZE, 1* UNIT_SIZE, 0f,
+            1 * UNIT_SIZE, -1 * UNIT_SIZE, 0f,
+
+            -1 * UNIT_SIZE, 1 * UNIT_SIZE, 0f,
+            -1 * UNIT_SIZE, -1 * UNIT_SIZE, 0f,
+            1 * UNIT_SIZE, -1 * UNIT_SIZE, 0f
         )
         return s
     }
 
-    private fun initProgram():Int = GLES30.glCreateProgram().let {
+    private fun initProgram(): Int = GLES30.glCreateProgram().let {
         GLES30.glAttachShader(it, vertexShader)
         GLES30.glAttachShader(it, fragShader)
         GLES30.glLinkProgram(it)
@@ -81,6 +90,7 @@ class Wall (val resources: Resources, val textureId: Int) : GLShape {
         }
         result
     }
+
     override fun draw() {
         GLES30.glUseProgram(program)
 
@@ -108,10 +118,10 @@ class Wall (val resources: Resources, val textureId: Int) : GLShape {
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, pointCount)
     }
 
-    companion object{
+    companion object {
         const val COORD_SIZE_PER_VERTEX = 3
         const val TEXTURE_SIZE_PER_VERTEX = 2
-        const val UNIT_SIZE = 0.15f
+        const val UNIT_SIZE = 1f
     }
 
 }

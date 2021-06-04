@@ -26,8 +26,12 @@ class GL30WallRender(val resource: Resources) : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        GLES30.glViewport(0, 0, width, height)
-        val ratio = (width.toFloat() / height.toFloat())
+        val viewWidth = width*0.8
+        val viewHeight = height*0.6
+        val xStart = (width - viewWidth) /2
+        val yStart = (height - viewHeight)/2
+        GLES30.glViewport(xStart.toInt(), yStart.toInt(), viewWidth.toInt(), viewHeight.toInt())
+        val ratio = (viewWidth.toFloat() / viewHeight.toFloat())
         MatrixState.setProjectfrustumM(-ratio, ratio, -1f, 1f, 1f, 10f)
         MatrixState.setCamera(0f, 0f, 3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
     }
@@ -58,13 +62,17 @@ class GL30WallRender(val resource: Resources) : GLSurfaceView.Renderer {
         GLES30.glTexParameterf(
             GLES30.GL_TEXTURE_2D,
             GLES30.GL_TEXTURE_WRAP_S,
-            GLES30.GL_CLAMP_TO_EDGE.toFloat()
+            GLES30.GL_REPEAT.toFloat()
         )
         GLES30.glTexParameterf(
             GLES30.GL_TEXTURE_2D,
             GLES30.GL_TEXTURE_WRAP_T,
-            GLES30.GL_CLAMP_TO_EDGE.toFloat()
+            GLES30.GL_REPEAT.toFloat()
         )
+
+        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D,
+            GLES30.GL_TEXTURE_SWIZZLE_R,//片元着色器的颜色红色通道
+            GLES30.GL_GREEN.toFloat())//映射纹理的绿颜色通道
         val bitmap = resource.openRawResource(R.drawable.wall).let {
             var bmp: Bitmap? = null
             try {
