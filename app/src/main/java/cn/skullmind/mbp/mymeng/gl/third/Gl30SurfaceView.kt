@@ -5,16 +5,17 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.view.MotionEvent
 import cn.skullmind.mbp.mymeng.gl.third.renders.GL30BallRenderer
+import cn.skullmind.mbp.mymeng.gl.third.renders.GL30UniverseSkyRender
 import cn.skullmind.mbp.mymeng.gl.third.renders.GL30WallRender
 
 class Gl30SurfaceView(context: Context?) : GLSurfaceView(context) {
-    private val render: GL30WallRender
+    private val render: GL30UniverseSkyRender
     private var touchX = 0f
     private var touchY = 0f
 
     init {
         setEGLContextClientVersion(3)
-        render = GL30WallRender(resources)
+        render = GL30UniverseSkyRender(resources)
         setRenderer(render)
         renderMode = RENDERMODE_CONTINUOUSLY
     }
