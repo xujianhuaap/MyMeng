@@ -13,17 +13,15 @@ object MatrixState {
     private lateinit var mMVPMatrix: FloatArray //最终结果
     private lateinit var mModelMatrix: FloatArray
 
-
-    private val lightPosition = FloatArray(3)
-    private val rawLightBuffer = ByteBuffer.allocateDirect(lightPosition.size *4)
     lateinit var lightBuffer:FloatBuffer
-
+    lateinit var cameraBuffer:FloatBuffer
     fun getCurrentModelMatrix() = mMVPMatrix
     fun setLightPosition(x:Float,y: Float,z: Float){
+        val lightPosition = FloatArray(3)
         lightPosition[0] = x
         lightPosition[1] = y
         lightPosition[2] = z
-        lightBuffer = rawLightBuffer.run {
+        lightBuffer = ByteBuffer.allocateDirect(lightPosition.size *4).run {
             order(ByteOrder.nativeOrder())
             asFloatBuffer().apply {
                 put(lightPosition)
@@ -65,6 +63,18 @@ object MatrixState {
             tx, ty, tz,
             upx, upy, upz
         )
+
+        val cameraLocation = FloatArray(3)
+        cameraLocation[0] = cx
+        cameraLocation[1] = cy
+        cameraLocation[2] = cz
+        cameraBuffer = ByteBuffer.allocateDirect(cameraLocation.size *4).run {
+            order(ByteOrder.nativeOrder())
+            asFloatBuffer().apply {
+                put(cameraLocation)
+                position(0)
+            }
+        }
     }
 
     //正交转换

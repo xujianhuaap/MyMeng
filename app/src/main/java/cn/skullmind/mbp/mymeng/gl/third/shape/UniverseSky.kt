@@ -21,6 +21,7 @@ class UniverseSky(private var pointCount: Int,
     private var uPointSizeHandle = 0
     private var uMVPMatrixHandle = 0
 
+    var cAngle = 0f
     init {
         if(pointCount < 100){
             pointCount = 100
@@ -71,8 +72,9 @@ class UniverseSky(private var pointCount: Int,
     }
 
     override fun draw() {
-        GLES30.glUseProgram(program)
         MatrixState.setInitModelMatrix()
+        MatrixState.rotate(cAngle, 0f, 1f, 0f)
+        GLES30.glUseProgram(program)
         GLES30.glEnableVertexAttribArray(aPositionHandle)
         GLES30.glUniformMatrix4fv(uMVPMatrixHandle,1,
             false,MatrixState.getFinalMatrix(),0)

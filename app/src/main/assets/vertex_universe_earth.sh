@@ -1,5 +1,4 @@
 #version 300 es
-
 uniform mat4 uMVPMatrix;
 uniform mat4 uMMatrix;
 uniform vec3 uCamera;
@@ -15,6 +14,7 @@ out vec4 vDiffUse;//(漫)反色光
 out vec4 vSpecular;//(镜面)反色光
 
 void pointLight(
+    in vec3 normal,
     in vec3 lightPosition,
     in vec4 ambientLight,
     in vec4 diffUseLight,
@@ -25,20 +25,17 @@ void pointLight(
 ){
     //环境光计算
     ambient = ambientLight;
-
-
-
     //1. 标准化法向量
-    vec3 normalTarget = aPosition + aNormal;
+    vec3 normalTarget = aPosition + normal;
     vec3 newNormal = (uMMatrix*vec4(normalTarget,1)).xyz - (uMMatrix*vec4(aPosition,1)).xyz;
     newNormal = normalize(newNormal);
 
     //标准化观察点
-    vec3 eye = uCamera - (uMMatrix*vec4(aPosition,1)).xyz;
+    vec3 eye = uCamera - (uMMatrix * vec4(aPosition,1)).xyz;
     eye = normalize(eye);
 
     //标准化光源
-    vec3 light = uLightLocation - (uMMatrix*vec4(aPosition,1)).xyz;
+    vec3 light = normalize(lightPosition - (uMMatrix * vec4(aPosition,1)).xyz);
     light = normalize(light);
 
     //漫色光反色计算
@@ -49,18 +46,18 @@ void pointLight(
     vec3 viewAndLightVec = normalize(eye + light);
     float LightStrength = 50.0;
     float nDotViewAndLight = dot(newNormal,viewAndLightVec);
-    float powerFactor = max(0.0, pow(nDotViewAndLight,LightStrength);
-    specular = specularLight*powerFactor;
+    float powerFactor = max(0.0, pow(nDotViewAndLight,LightStrength));
+    specular = specularLight * powerFactor;
 
 }
 
 void main(){
 
-    gl_Position = uMVPMatrix*vec4(aPosition,1);
+    gl_Position = uMVPMatrix * vec4(aPosition,1);
     vTexCoor = aTexCoor;
-    vec4 ambientTemp=vec4(0.0,0.0,0.0,0.0);
-    vec4 diffuseTemp=vec4(0.0,0.0,0.0,0.0);
-    vec4 specularTemp=vec4(0.0,0.0,0.0,0.0);
+    vec4 ambientTemp = vec4(0.0,0.0,0.0,0.0);
+    vec4 diffuseTemp = vec4(0.0,0.0,0.0,0.0);
+    vec4 specularTemp = vec4(0.0,0.0,0.0,0.0);
     vec3 normalTemp = normalize(aNormal);
     pointLight(
         normalTemp,
@@ -71,7 +68,7 @@ void main(){
         ambientTemp,
         diffuseTemp,
         specularTemp
-    )
+    );
 
     vAmbient = ambientTemp;
     vDiffUse = diffuseTemp;
