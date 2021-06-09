@@ -4,6 +4,7 @@ import android.opengl.Matrix
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.util.*
 
 object MatrixState {
     private val mProjMatrix = FloatArray(16)
@@ -15,13 +16,25 @@ object MatrixState {
 
     lateinit var lightBuffer:FloatBuffer
     lateinit var cameraBuffer:FloatBuffer
+
+    var mStack = Stack<FloatArray>()
+
+    fun pushMatrix()
+    {
+        mStack.push(mModelMatrix.clone())
+    }
+
+    fun popMatrix()
+    {
+        mModelMatrix = mStack.pop()
+    }
     fun getCurrentModelMatrix() = mMVPMatrix
-    fun setLightPosition(x:Float,y: Float,z: Float){
+    fun setLightPosition(x: Float, y: Float, z: Float){
         val lightPosition = FloatArray(3)
         lightPosition[0] = x
         lightPosition[1] = y
         lightPosition[2] = z
-        lightBuffer = ByteBuffer.allocateDirect(lightPosition.size *4).run {
+        lightBuffer = ByteBuffer.allocateDirect(lightPosition.size * 4).run {
             order(ByteOrder.nativeOrder())
             asFloatBuffer().apply {
                 put(lightPosition)
@@ -68,7 +81,7 @@ object MatrixState {
         cameraLocation[0] = cx
         cameraLocation[1] = cy
         cameraLocation[2] = cz
-        cameraBuffer = ByteBuffer.allocateDirect(cameraLocation.size *4).run {
+        cameraBuffer = ByteBuffer.allocateDirect(cameraLocation.size * 4).run {
             order(ByteOrder.nativeOrder())
             asFloatBuffer().apply {
                 put(cameraLocation)

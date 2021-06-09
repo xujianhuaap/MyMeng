@@ -145,7 +145,6 @@ class Earth(
     }
 
     override fun draw() {
-        MatrixState.setInitModelMatrix()
         MatrixState.rotate(eAngle, 0f, 1f, 0f)
         GLES30.glUseProgram(program)
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0)

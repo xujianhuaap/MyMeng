@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentActivity
 import cn.skullmind.mbp.mymeng.R
 import cn.skullmind.mbp.mymeng.gl.second.Gl20SurfaceView
 import cn.skullmind.mbp.mymeng.gl.third.Gl30SurfaceView
+import cn.skullmind.mbp.mymeng.gl.third.renders.GL30UniverseSkyRender
 
 fun startGLActivity(context: Context) {
     val intent = Intent(context, GLActivity::class.java)
@@ -35,4 +36,14 @@ class GLActivity : FragmentActivity() {
     private fun getGL30SurfaceView() = container.getChildAt(1)
 
     private fun getGL20SurfaceView() = container.getChildAt(0)
+
+    override fun onResume() {
+        super.onResume()
+        GL30UniverseSkyRender.threadFlag = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        GL30UniverseSkyRender.threadFlag = false
+    }
 }

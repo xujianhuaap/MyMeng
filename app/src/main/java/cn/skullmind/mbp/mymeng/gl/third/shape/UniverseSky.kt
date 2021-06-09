@@ -72,7 +72,6 @@ class UniverseSky(private var pointCount: Int,
     }
 
     override fun draw() {
-        MatrixState.setInitModelMatrix()
         MatrixState.rotate(cAngle, 0f, 1f, 0f)
         GLES30.glUseProgram(program)
         GLES30.glEnableVertexAttribArray(aPositionHandle)

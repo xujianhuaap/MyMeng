@@ -1,13 +1,13 @@
 package cn.skullmind.mbp.mymeng.gl.third.renders
+
 import android.content.res.Resources
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLES30
 import android.opengl.GLSurfaceView
 import android.opengl.GLUtils
 import cn.skullmind.mbp.mymeng.R
-import cn.skullmind.mbp.mymeng.gl.Sample7_5.Constant
 import cn.skullmind.mbp.mymeng.gl.third.shape.Earth
+import cn.skullmind.mbp.mymeng.gl.third.shape.Moon
 import cn.skullmind.mbp.mymeng.gl.third.shape.UniverseSky
 import cn.skullmind.mbp.tools.MatrixState
 import java.io.IOException
@@ -15,19 +15,22 @@ import java.io.InputStream
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class GL30UniverseSkyRender(private val resource: Resources):GLSurfaceView.Renderer {
-    private lateinit var smallSky:UniverseSky
-    private lateinit var bigSky:UniverseSky
-    private lateinit var earth:Earth
-    private var cAngle:Float = 0f
-    private var eAngle:Float = 0f
+class GL30UniverseSkyRender(private val resource: Resources) : GLSurfaceView.Renderer {
+    private lateinit var smallSky: UniverseSky
+    private lateinit var bigSky: UniverseSky
+    private lateinit var earth: Earth
+    private lateinit var moon:Moon
+    private var cAngle: Float = 0f
+    private var eAngle: Float = 0f
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         GLES30.glEnable(GLES30.GL_DEPTH_TEST)
         GLES30.glEnable(GLES30.GL_CULL_FACE)
         smallSky = UniverseSky(1000, resource, 1f)
         bigSky = UniverseSky(500, resource, 2f)
-        earth = Earth(2.0f,resource)
+        earth = Earth(2.0f, resource)
+        moon = Moon(1.0f,resource)
+        MatrixState.setInitModelMatrix()
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -36,12 +39,13 @@ class GL30UniverseSkyRender(private val resource: Resources):GLSurfaceView.Rende
         MatrixState.setProjectfrustumM(-ratio, ratio, -1f, 1f, 4f, 100f)
 
         MatrixState.setCamera(0f, 0f, 7.2f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
-        MatrixState.setLightPosition(100f, 5f, 0f)
-        earth.texDayId =  initTexture(R.mipmap.earth)
+        MatrixState.setLightPosition(100f, 5f, -0f)
+        earth.texDayId = initTexture(R.mipmap.earth)
         earth.texNightId = initTexture(R.mipmap.earthn)
+        moon.texId = initTexture(R.mipmap.moon)
         object : Thread() {
             override fun run() {
-                while (Constant.threadFlag) {
+                while (threadFlag) {
                     eAngle = (eAngle + 2) % 360
                     cAngle = (cAngle + 0.2f) % 360
                     try {
@@ -59,9 +63,16 @@ class GL30UniverseSkyRender(private val resource: Resources):GLSurfaceView.Rende
         smallSky.cAngle = cAngle
         bigSky.cAngle = cAngle
         earth.eAngle = eAngle
+        moon.eAngle = eAngle
+
+        MatrixState.pushMatrix()
+        earth.draw()
+        moon.draw()
+        MatrixState.popMatrix()
+        MatrixState.pushMatrix()
         smallSky.draw()
         bigSky.draw()
-        earth.draw()
+        MatrixState.popMatrix()
     }
 
     private fun initTexture(drawableId: Int): Int //textureId
@@ -96,7 +107,7 @@ class GL30UniverseSkyRender(private val resource: Resources):GLSurfaceView.Rende
         )
 
         val inputStream: InputStream = resource.openRawResource(drawableId)
-        val bitmapTmp  = try {
+        val bitmapTmp = try {
             BitmapFactory.decodeStream(inputStream)
         } finally {
             try {
@@ -114,5 +125,9 @@ class GL30UniverseSkyRender(private val resource: Resources):GLSurfaceView.Rende
         )
         bitmapTmp.recycle()
         return textureId
+    }
+
+    companion object{
+         var threadFlag = true
     }
 }
