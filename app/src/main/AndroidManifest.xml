@@ -33,6 +33,7 @@
         <activity android:name=".chrome.EyeActivity"></activity>
         <activity android:name=".chrome.ChromeActivity"></activity>
         <activity android:name=".gl.GLActivity"></activity>
+        <activity android:name=".gl.third.universe.UniverseActivity" android:screenOrientation="landscape"></activity>
     </application>
 
 

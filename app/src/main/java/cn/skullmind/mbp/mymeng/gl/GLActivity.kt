@@ -39,11 +39,9 @@ class GLActivity : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        GL30UniverseSkyRender.threadFlag = true
     }
 
     override fun onPause() {
         super.onPause()
-        GL30UniverseSkyRender.threadFlag = false
     }
 }

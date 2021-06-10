@@ -179,7 +179,7 @@ class Moon(private val radius: Float, private val resource: Resources) :GLShape 
     }
     override fun draw() {
         MatrixState.translate(2f, 0f, 0f)
-        MatrixState.rotate(eAngle, 0f, 1f, 0f)
+        MatrixState.rotate(eAngle/10, 0f, 1f, 0f)
         GLES30.glUseProgram(program)
         GLES30.glUniform1i(sTextureHandle, 0)
         GLES30.glUniformMatrix4fv(

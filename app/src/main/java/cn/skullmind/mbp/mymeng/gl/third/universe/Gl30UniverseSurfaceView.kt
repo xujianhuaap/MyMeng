@@ -1,23 +1,20 @@
-package cn.skullmind.mbp.mymeng.gl.third
+package cn.skullmind.mbp.mymeng.gl.third.universe
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.view.MotionEvent
 import androidx.work.WorkManager
-import cn.skullmind.mbp.mymeng.gl.third.renders.GL30BallRenderer
-import cn.skullmind.mbp.mymeng.gl.third.renders.GL30SixPointStarRenderer
 import cn.skullmind.mbp.mymeng.gl.third.renders.GL30UniverseSkyRender
-import cn.skullmind.mbp.mymeng.gl.third.renders.GL30WallRender
 
-class Gl30SurfaceView(context: Context?) : GLSurfaceView(context) {
-    private val render: GL30SixPointStarRenderer
+class Gl30UniverseSurfaceView(context: Context?) : GLSurfaceView(context) {
+    private val render: GL30UniverseSkyRender
     private var touchX = 0f
     private var touchY = 0f
 
     init {
         setEGLContextClientVersion(3)
-        render = GL30SixPointStarRenderer()
+        render = GL30UniverseSkyRender(resources)
         setRenderer(render)
         renderMode = RENDERMODE_CONTINUOUSLY
     }
@@ -40,6 +37,13 @@ class Gl30SurfaceView(context: Context?) : GLSurfaceView(context) {
 
     }
 
+
+    fun resumeRotateTask(){
+        render.resumeRotateTask()
+    }
+    fun cancelRotateTask(){
+        render.cancelRotateTask()
+    }
 
     companion object {
         const val SCALE_FACTOR = 0.8f
