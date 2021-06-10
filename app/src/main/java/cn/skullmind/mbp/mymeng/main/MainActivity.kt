@@ -1,14 +1,15 @@
-package cn.skullmind.mbp.mymeng
+package cn.skullmind.mbp.mymeng.main
 
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import cn.skullmind.mbp.mymeng.R
 import cn.skullmind.mbp.mymeng.chrome.startChromeActivity
 import cn.skullmind.mbp.mymeng.chrome.startEyeActivity
 import cn.skullmind.mbp.mymeng.fibonacci.startFibonacciActivity
-import cn.skullmind.mbp.mymeng.gl.startGLActivity
 import cn.skullmind.mbp.mymeng.gl.third.universe.startUniverseActivity
 import cn.skullmind.mbp.mymeng.pick_picture.startPickPictureActivity
 import cn.skullmind.mbp.mymeng.user.startUserActivity
@@ -30,41 +31,51 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        findViewById<View>(R.id.tv_camera).setOnClickListener {
-            startPickPictureActivity(this)
-        }
+        findViewById<RecyclerView>(R.id.recycler_view).apply {
+            adapter = FunctionAdapter(getFunctionData()) {
 
-        findViewById<View>(R.id.tv_image_upload).setOnClickListener {
+                handleClickItem(it)
+            }
 
-            ImageOptions().build(this).enqueue()
-        }
-
-        findViewById<View>(R.id.tv_user).setOnClickListener {
-            startUserActivity(this)
-
-        }
-        findViewById<View>(R.id.tv_fibonacci).setOnClickListener {
-            startFibonacciActivity(this)
-
-        }
-        findViewById<View>(R.id.tv_chrome).setOnClickListener {
-            startChromeActivity(this)
-
-        }
-
-        findViewById<View>(R.id.tv_eye_view).setOnClickListener {
-            startEyeActivity(this)
-
-        }
-
-        findViewById<View>(R.id.tv_gl).setOnClickListener {
-            startUniverseActivity(this)
-
+            layoutManager = LinearLayoutManager(this@MainActivity)
         }
 
 
+    }
+
+    private fun handleClickItem(it: Function) {
+        if (Function.UNIVERSE_SKY == it) {
+            startUniverseActivity(this@MainActivity)
+        }
+
+        if (Function.FIBONACCI_CURVE == it) {
+            startFibonacciActivity(this@MainActivity)
+
+        }
+
+        if (Function.CHROME_LOGO == it) {
+            startChromeActivity(this@MainActivity)
+        }
 
 
+        if (Function.VIEW_DRAW == it) {
+            startEyeActivity(this@MainActivity)
+
+        }
+
+        if (Function.CAMERA_USE == it) {
+            startPickPictureActivity(this@MainActivity)
+        }
+
+        if (Function.DB_USE == it) {
+
+            startUserActivity(this@MainActivity)
+        }
+
+        if (Function.WORKER_MANAGER_USE == it) {
+
+            ImageOptions().build(this@MainActivity).enqueue()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -81,5 +92,15 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun getFunctionData(): List<Function> {
+        val datas = ArrayList<Function>()
+        datas.add(Function.UNIVERSE_SKY)
+        datas.add(Function.FIBONACCI_CURVE)
+        datas.add(Function.CHROME_LOGO)
+        datas.add(Function.VIEW_DRAW)
+        datas.add(Function.CAMERA_USE)
+        return datas
     }
 }

@@ -13,8 +13,7 @@ import cn.skullmind.mbp.mymeng.R
 import cn.skullmind.mbp.mymeng.gl.third.shape.Earth
 import cn.skullmind.mbp.mymeng.gl.third.shape.Moon
 import cn.skullmind.mbp.mymeng.gl.third.shape.UniverseSky
-import cn.skullmind.mbp.mymeng.gl.worker_manager.UniverseAngleWorker
-import cn.skullmind.mbp.mymeng.gl.worker_manager.UniverseAngles
+import cn.skullmind.mbp.mymeng.gl.third.universe.UniverseAngles
 import cn.skullmind.mbp.tools.MatrixState
 import java.io.IOException
 import java.io.InputStream

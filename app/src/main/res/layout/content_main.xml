@@ -13,73 +13,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <TextView
-            android:id="@+id/tv_camera"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            android:text="@string/function_camera">
+            android:layout_height="match_parent">
 
-        </TextView>
-        <TextView
-            android:id="@+id/tv_image_upload"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            android:text="@string/function_upload_image">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/tv_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            android:text="@string/function_user">
-
-        </TextView>
-        <TextView
-            android:id="@+id/tv_fibonacci"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            android:text="@string/fibonacci_name">
-
-        </TextView>
-        <TextView
-            android:id="@+id/tv_chrome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            android:text="@string/chrome_name">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/tv_eye_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            android:text="@string/eye_name">
-
-        </TextView>
-        <TextView
-            android:id="@+id/tv_gl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:textSize="18sp"
-            android:text="@string/open_gl">
-
-        </TextView>
-
-
+        </androidx.recyclerview.widget.RecyclerView>
 
 
     </LinearLayout>
